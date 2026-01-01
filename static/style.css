@@ -1,0 +1,236 @@
+/* Star Carr Mesolithic Scholar Simulator - Styles */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1a1a2e;
+    color: #e0e0e0;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem;
+}
+
+/* Header */
+header {
+    text-align: center;
+    padding: 1rem 0;
+    border-bottom: 1px solid #333;
+    margin-bottom: 1rem;
+}
+
+header h1 {
+    font-size: 1.8rem;
+    color: #86efac;
+    letter-spacing: 0.2em;
+    font-weight: 300;
+}
+
+.subtitle {
+    color: #888;
+    font-style: italic;
+    margin-top: 0.25rem;
+}
+
+/* Main layout */
+main {
+    display: flex;
+    gap: 1.5rem;
+    align-items: flex-start;
+}
+
+/* Map section */
+.map-section {
+    flex-shrink: 0;
+}
+
+#map-canvas {
+    border: 2px solid #333;
+    border-radius: 4px;
+    background: #1a1a2e;
+    cursor: crosshair;
+}
+
+.controls {
+    text-align: center;
+    margin-top: 0.5rem;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.controls p {
+    margin: 0.25rem 0;
+}
+
+/* Observation panel */
+.observation-panel {
+    flex: 1;
+    min-width: 0;
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+.observation-panel h2 {
+    font-size: 1rem;
+    color: #86efac;
+    margin-bottom: 0.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    font-weight: 500;
+}
+
+.location-info,
+.terrain-visible,
+.observations {
+    background: #242438;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+#location-text {
+    font-family: monospace;
+    color: #aaa;
+}
+
+#terrain-text {
+    margin-top: 0.5rem;
+}
+
+/* Terrain badges */
+#terrain-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.terrain-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+/* Species cards */
+.species-card {
+    background: #1a1a2e;
+    border: 1px solid #333;
+    border-radius: 4px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+}
+
+.species-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #333;
+    padding-bottom: 0.5rem;
+}
+
+.species-header h3 {
+    font-size: 1.1rem;
+    color: #fff;
+}
+
+.latin-name {
+    font-style: italic;
+    color: #888;
+    font-size: 0.9rem;
+}
+
+.category-badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    text-transform: capitalize;
+    background: #333;
+    color: #aaa;
+}
+
+.category-badge.tree { background: #166534; color: #fff; }
+.category-badge.shrub { background: #365314; color: #fff; }
+.category-badge.plant { background: #4d7c0f; color: #fff; }
+.category-badge.large_herbivore { background: #92400e; color: #fff; }
+.category-badge.medium_herbivore { background: #78350f; color: #fff; }
+.category-badge.predator { background: #991b1b; color: #fff; }
+.category-badge.aquatic { background: #1e40af; color: #fff; }
+
+.species-photo {
+    max-width: 200px;
+    max-height: 150px;
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    border: 1px solid #333;
+}
+
+.species-details p {
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+    line-height: 1.4;
+}
+
+.species-details strong {
+    color: #86efac;
+}
+
+.placeholder {
+    color: #666;
+    font-style: italic;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    padding: 1rem;
+    color: #555;
+    font-size: 0.8rem;
+    border-top: 1px solid #333;
+    margin-top: 1rem;
+}
+
+/* Scrollbar */
+.observation-panel::-webkit-scrollbar {
+    width: 8px;
+}
+
+.observation-panel::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+.observation-panel::-webkit-scrollbar-thumb {
+    background: #333;
+    border-radius: 4px;
+}
+
+.observation-panel::-webkit-scrollbar-thumb:hover {
+    background: #444;
+}
+
+/* Responsive */
+@media (max-width: 800px) {
+    main {
+        flex-direction: column;
+    }
+    
+    .map-section {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    
+    .observation-panel {
+        max-height: none;
+    }
+}
