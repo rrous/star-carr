@@ -234,6 +234,11 @@ function renderObservations(data) {
     locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
     terrainText.innerHTML = `<strong>${data.current_terrain.name.replace('_', ' ')}</strong>: ${data.current_terrain.description}`;
     
+    // Add terrain photo if available
+    if (data.current_terrain.photo_url) {
+        terrainText.innerHTML += `<br><img src="${data.current_terrain.photo_url}" alt="${data.current_terrain.name}" class="terrain-photo">`;
+    }
+    
     // Update visible terrains
     terrainList.innerHTML = data.visible_terrains.map(t => `
         <span class="terrain-badge" style="background-color: ${t.color}; color: ${getContrastColor(t.color)}">
