@@ -19,18 +19,18 @@ SPECIES_DENSITY = 0.3
 
 # Terrain types
 TERRAIN_TYPES = {
-    0: {"name": "deep_water", "color": "#1e3a8a", "description": "Deep lake water, dark and cold"},
-    1: {"name": "shallow_water", "color": "#3b82f6", "description": "Shallow lake margins, wading depth"},
-    2: {"name": "reed_bed", "color": "#a3e635", "description": "Dense stands of tall reeds"},
-    3: {"name": "wetland", "color": "#84cc16", "description": "Marshy ground with sedges and rushes"},
-    4: {"name": "carr_woodland", "color": "#65a30d", "description": "Wet woodland of willow and alder"},
-    5: {"name": "birch_woodland", "color": "#16a34a", "description": "Open birch-dominated forest"},
-    6: {"name": "mixed_woodland", "color": "#15803d", "description": "Dense mixed deciduous woodland"},
-    7: {"name": "grassland", "color": "#86efac", "description": "Open grassy clearings"},
-    8: {"name": "platform", "color": "#92400e", "description": "Star Carr wooden platform - occupation site"},
+    0: {"name": "deep_water", "color": "#1e3a8a", "description": "Deep lake water, dark and cold", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Aerial_View_of_Lake_Bled.jpg/320px-Aerial_View_of_Lake_Bled.jpg"},
+    1: {"name": "shallow_water", "color": "#3b82f6", "description": "Shallow lake margins, wading depth", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Swamp_lake_margins.jpg/320px-Swamp_lake_margins.jpg"},
+    2: {"name": "reed_bed", "color": "#a3e635", "description": "Dense stands of tall reeds", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Phragmites_australis_-_reed_bed.jpg/320px-Phragmites_australis_-_reed_bed.jpg"},
+    3: {"name": "wetland", "color": "#84cc16", "description": "Marshy ground with sedges and rushes", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Wetland_-_geograph.org.uk_-_1265382.jpg/320px-Wetland_-_geograph.org.uk_-_1265382.jpg"},
+    4: {"name": "carr_woodland", "color": "#65a30d", "description": "Wet woodland of willow and alder", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Carr_woodland_-_geograph.org.uk_-_1257615.jpg/320px-Carr_woodland_-_geograph.org.uk_-_1257615.jpg"},
+    5: {"name": "birch_woodland", "color": "#16a34a", "description": "Open birch-dominated forest", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Birch_forest_in_Russia.jpg/320px-Birch_forest_in_Russia.jpg"},
+    6: {"name": "mixed_woodland", "color": "#15803d", "description": "Dense mixed deciduous woodland", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Mixed_forest_in_autumn.jpg/320px-Mixed_forest_in_autumn.jpg"},
+    7: {"name": "grassland", "color": "#86efac", "description": "Open grassy clearings", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Grassland_in_England.jpg/320px-Grassland_in_England.jpg"},
+    8: {"name": "platform", "color": "#92400e", "description": "Star Carr wooden platform - occupation site", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Star_Carr_wooden_platform.jpg/320px-Star_Carr_wooden_platform.jpg"},
 }
 
-# Species database
+# Species database - ALL WITH PHOTO URLs
 SPECIES_DATABASE = {
     1: {
         "id": 1,
@@ -93,7 +93,8 @@ SPECIES_DATABASE = {
         "season_note": "Fuzzy catkins before leaves emerge. Suckers sprouting from roots.",
         "uses": "Light soft wood for carving, paddles. Inner bark edible in emergency.",
         "abundance": "occasional",
-        "terrain_preference": [5, 6, 7]
+        "terrain_preference": [5, 6, 7],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Populus_tremula_-_trembling_aspen_-_aspen_-_52281825394.jpg/220px-Populus_tremula_-_trembling_aspen_-_aspen_-_52281825394.jpg"
     },
     5: {
         "id": 5,
@@ -108,7 +109,8 @@ SPECIES_DATABASE = {
         "season_note": "Long yellow catkins ('lamb's tails') releasing pollen. Tiny red female flowers visible.",
         "uses": "Nuts highly nutritious (autumn). Straight rods for tools, traps, shelter frames. Excellent firewood.",
         "abundance": "common",
-        "terrain_preference": [5, 6]
+        "terrain_preference": [5, 6],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Corylus_avellana_-_hazel_-_hazelaar_-_Fumay.jpg/220px-Corylus_avellana_-_hazel_-_hazelaar_-_Fumay.jpg"
     },
     6: {
         "id": 6,
@@ -139,7 +141,8 @@ SPECIES_DATABASE = {
         "season_note": "Young spring shoots are most tender for eating and fiber extraction.",
         "uses": "Young leaves edible when cooked (very nutritious). Stem fibers make strong cordage and cloth.",
         "abundance": "common",
-        "terrain_preference": [7, 8]
+        "terrain_preference": [7, 8],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Urtica_dioica_-_stinging_nettle_-_Grote_brandnetel.jpg/220px-Urtica_dioica_-_stinging_nettle_-_Grote_brandnetel.jpg"
     },
     8: {
         "id": 8,
@@ -154,7 +157,8 @@ SPECIES_DATABASE = {
         "season_note": "Fresh growth emerging from tussock centers. Flower spikes developing.",
         "uses": "Leaves for weaving, cordage, thatching. Tussocks indicate firm(ish) ground in marshes.",
         "abundance": "abundant",
-        "terrain_preference": [2, 3, 4]
+        "terrain_preference": [2, 3, 4],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Carex_acutiformis_-_lesser_pond_sedge_-_moeraszegge_-_01.jpg/220px-Carex_acutiformis_-_lesser_pond_sedge_-_moeraszegge_-_01.jpg"
     },
     10: {
         "id": 10,
@@ -201,7 +205,8 @@ SPECIES_DATABASE = {
         "season_note": "Does pregnant, will give birth in late spring. Bucks establishing territories.",
         "uses": "Smaller meat yield ~12kg but tender. Hide soft and supple for fine work.",
         "abundance": "common",
-        "terrain_preference": [5, 6]
+        "terrain_preference": [5, 6],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Capreolus_capreolus_2_-_Bournemouth.jpg/220px-Capreolus_capreolus_2_-_Bournemouth.jpg"
     },
     13: {
         "id": 13,
@@ -216,7 +221,8 @@ SPECIES_DATABASE = {
         "season_note": "Calving season. Bulls aggressive. DANGEROUS - do not approach.",
         "uses": "Massive meat yield ~350kg but VERY DANGEROUS to hunt. Hide thick, horns for containers.",
         "abundance": "rare",
-        "terrain_preference": [7, 3]
+        "terrain_preference": [7, 3],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Ur-painting.jpg/220px-Ur-painting.jpg"
     },
     14: {
         "id": 14,
@@ -231,7 +237,8 @@ SPECIES_DATABASE = {
         "season_note": "Sows with litters of striped piglets. Boars can be aggressive - give space.",
         "uses": "Good meat yield ~40kg, rich fat. Hide for leather. Tusks and bones for tools. DANGEROUS when cornered.",
         "abundance": "occasional",
-        "terrain_preference": [4, 5, 6]
+        "terrain_preference": [4, 5, 6],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Sus_scrofa_1_-_Whipsnade_Zoo.jpg/220px-Sus_scrofa_1_-_Whipsnade_Zoo.jpg"
     },
     15: {
         "id": 15,
@@ -246,7 +253,8 @@ SPECIES_DATABASE = {
         "season_note": "Kits born in lodge. Adults very active repairing winter damage. Territorial.",
         "uses": "Highly valued fur (waterproof). Castoreum for medicine/bait. Meat edible. Dam pools trap fish.",
         "abundance": "occasional",
-        "terrain_preference": [1, 2, 4]
+        "terrain_preference": [1, 2, 4],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Beaver_-_Castor_fiber_-_01.jpg/220px-Beaver_-_Castor_fiber_-_01.jpg"
     },
     20: {
         "id": 20,
@@ -261,7 +269,8 @@ SPECIES_DATABASE = {
         "season_note": "Denning season - pups born. Pack centered on den. Adults hunting to feed young.",
         "uses": "Fur warm but spiritually significant. Competitor for deer. Potential THREAT to humans especially to children.",
         "abundance": "rare",
-        "terrain_preference": [5, 6, 7]
+        "terrain_preference": [5, 6, 7],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/220px-Eurasian_wolf_2.jpg"
     },
     21: {
         "id": 21,
@@ -276,7 +285,8 @@ SPECIES_DATABASE = {
         "season_note": "MOST DANGEROUS NOW - emerging from hibernation, very hungry. Sows with cubs extremely aggressive.",
         "uses": "Fur highly prized. Fat rendered for many uses. EXTREMELY DANGEROUS - avoid at all costs.",
         "abundance": "very_rare",
-        "terrain_preference": [5, 6]
+        "terrain_preference": [5, 6],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Kamchatka_Brown_Bear_near_Dvuhyurtochnoe_on_2015-07-23.jpg/220px-Kamchatka_Brown_Bear_near_Dvuhyurtochnoe_on_2015-07-23.jpg"
     },
     30: {
         "id": 30,
@@ -292,7 +302,7 @@ SPECIES_DATABASE = {
         "uses": "Good eating despite bones - ~2-5kg typical. Y-bones require careful preparation.",
         "abundance": "common",
         "terrain_preference": [1, 2],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/ea/Esox_lucius1.jpg/220px-Esox_lucius1.jpg"
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Esox_lucius_ZOO_1.jpg/220px-Esox_lucius_ZOO_1.jpg"
     },
     31: {
         "id": 31,
@@ -307,7 +317,8 @@ SPECIES_DATABASE = {
         "season_note": "NESTING NOW - eggs available. Be careful not to disturb too many nests. Ducklings and goslings appearing.",
         "uses": "Meat, eggs, feathers (fletching, bedding), down (insulation). Can be netted, trapped, or arrows.",
         "abundance": "abundant",
-        "terrain_preference": [1, 2, 3]
+        "terrain_preference": [1, 2, 3],
+        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Anas_platyrhynchos_male_female_quadrat.jpg/220px-Anas_platyrhynchos_male_female_quadrat.jpg"
     }
 }
 
