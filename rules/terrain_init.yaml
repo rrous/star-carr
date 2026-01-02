@@ -12,25 +12,7 @@ defaults:
   terrain: birch_woodland
   
 zones:
-  # Lake Flixton (partial - extends beyond map to east)
-  - name: lake_deep
-    terrain: deep_water
-    shape: ellipse
-    center: [160, 80]
-    radius: [50, 60]
-    
-  - name: lake_shallow
-    terrain: shallow_water
-    shape: ellipse
-    center: [160, 80]
-    radius: [60, 75]
-    
-  - name: reed_belt
-    terrain: reed_bed
-    shape: ellipse
-    center: [160, 80]
-    radius: [70, 90]
-    
+   
   # Wetlands
   - name: western_wetland
     terrain: wetland
@@ -87,7 +69,26 @@ zones:
     terrain: grassland
     shape: rect
     bounds: [15, 38, 35, 55]
+
+   # Lake Flixton (partial - extends beyond map to east)
+  - name: lake_deep
+    terrain: deep_water
+    shape: ellipse
+    center: [160, 80]
+    radius: [50, 60]
     
+  - name: lake_shallow
+    terrain: shallow_water
+    shape: ellipse
+    center: [160, 80]
+    radius: [60, 75]
+    
+  - name: reed_belt
+    terrain: reed_bed
+    shape: ellipse
+    center: [160, 80]
+    radius: [70, 90]
+
   # Star Carr Platform
   - name: star_carr_platform
     terrain: platform

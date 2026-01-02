@@ -1,17 +1,17 @@
 # Star Carr Species Configuration
 
 settings:
-  density: 0.30
+  density: 0.05
   season: spring
   default_photo: "/assets/species/placeholder.png"
 
 abundance_weights:
-  abundant: 5
+  abundant: 8
   very_common: 4
   common: 3
   occasional: 2
   rare: 1
-  very_rare: 0.5
+  very_rare: 0.2
 
 species:
   # TREES
