@@ -2,8 +2,11 @@ services:
   - type: web
     name: star-carr
     runtime: python
-    buildCommand: pip install -r requirements.txt && python generate_data.py
+    buildCommand: pip install -r requirements.txt
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.11"
+      # Add these in Render Dashboard (not here) for security:
+      # - UPSTASH_REDIS_REST_URL
+      # - UPSTASH_REDIS_REST_TOKEN
