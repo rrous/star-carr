@@ -1,4 +1,4 @@
-/* Star Carr Mesolithic Scholar Simulator - Styles */
+/* Star Carr Mesolithic Scholar Simulator - Styles v2 */
 
 * {
     margin: 0;
@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 1rem;
 }
@@ -57,17 +57,51 @@ main {
     border-radius: 4px;
     background: #1a1a2e;
     cursor: crosshair;
+    display: block;
+}
+
+/* Location info - under map */
+.location-info {
+    background: #242438;
+    padding: 0.75rem 1rem;
+    border-radius: 4px;
+    margin-top: 0.75rem;
+}
+
+#location-text {
+    font-family: monospace;
+    color: #86efac;
+    font-size: 0.9rem;
+}
+
+#terrain-text {
+    margin-top: 0.25rem;
+    font-size: 0.9rem;
+}
+
+/* Terrain badges */
+.terrain-visible {
+    margin-top: 0.5rem;
+}
+
+#terrain-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.terrain-badge {
+    padding: 0.2rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.75rem;
+    text-transform: capitalize;
 }
 
 .controls {
     text-align: center;
     margin-top: 0.5rem;
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: #666;
-}
-
-.controls p {
-    margin: 0.25rem 0;
 }
 
 /* Observation panel */
@@ -76,47 +110,18 @@ main {
     min-width: 0;
     max-height: calc(100vh - 150px);
     overflow-y: auto;
+    background: #242438;
+    padding: 1rem;
+    border-radius: 4px;
 }
 
 .observation-panel h2 {
     font-size: 1rem;
     color: #86efac;
-    margin-bottom: 0.5rem;
+    margin-bottom: 1rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 500;
-}
-
-.location-info,
-.terrain-visible,
-.observations {
-    background: #242438;
-    padding: 1rem;
-    border-radius: 4px;
-    margin-bottom: 1rem;
-}
-
-#location-text {
-    font-family: monospace;
-    color: #aaa;
-}
-
-#terrain-text {
-    margin-top: 0.5rem;
-}
-
-/* Terrain badges */
-#terrain-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.terrain-badge {
-    padding: 0.25rem 0.5rem;
-    border-radius: 3px;
-    font-size: 0.8rem;
-    text-transform: capitalize;
 }
 
 /* Species cards */
@@ -126,16 +131,26 @@ main {
     border-radius: 4px;
     padding: 1rem;
     margin-bottom: 1rem;
+    transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.species-card.highlighted {
+    border-color: #86efac;
+    box-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
 }
 
 .species-header {
     display: flex;
     flex-wrap: wrap;
-    align-items: baseline;
+    align-items: center;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     border-bottom: 1px solid #333;
     padding-bottom: 0.5rem;
+}
+
+.species-symbol {
+    font-size: 1.5rem;
 }
 
 .species-header h3 {
@@ -156,6 +171,7 @@ main {
     text-transform: capitalize;
     background: #333;
     color: #aaa;
+    margin-left: auto;
 }
 
 .category-badge.tree { background: #166534; color: #fff; }
@@ -165,18 +181,21 @@ main {
 .category-badge.medium_herbivore { background: #78350f; color: #fff; }
 .category-badge.predator { background: #991b1b; color: #fff; }
 .category-badge.aquatic { background: #1e40af; color: #fff; }
+.category-badge.bird { background: #5b21b6; color: #fff; }
 
 .species-photo {
-    max-width: 200px;
-    max-height: 150px;
+    max-width: 180px;
+    max-height: 130px;
     border-radius: 4px;
     margin-bottom: 0.75rem;
     border: 1px solid #333;
+    float: right;
+    margin-left: 1rem;
 }
 
 .species-details p {
-    margin-bottom: 0.5rem;
-    font-size: 0.9rem;
+    margin-bottom: 0.4rem;
+    font-size: 0.85rem;
     line-height: 1.4;
 }
 
@@ -187,6 +206,16 @@ main {
 .placeholder {
     color: #666;
     font-style: italic;
+}
+
+.more-species {
+    color: #86efac;
+    font-size: 0.85rem;
+    text-align: center;
+    padding: 0.5rem;
+    background: #1a1a2e;
+    border-radius: 4px;
+    margin-top: 0.5rem;
 }
 
 /* Footer */
@@ -218,7 +247,7 @@ footer {
 }
 
 /* Responsive */
-@media (max-width: 800px) {
+@media (max-width: 900px) {
     main {
         flex-direction: column;
     }
@@ -228,6 +257,11 @@ footer {
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+    
+    #map-canvas {
+        max-width: 100%;
+        height: auto;
     }
     
     .observation-panel {

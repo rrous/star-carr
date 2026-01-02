@@ -161,7 +161,7 @@ def observe(x: int, y: int):
         })
         terrain_list.append({'id': t_id, **t_info})
     
-    # Format species observations
+    # Format species observations with locations
     species_list = []
     for sp_id, data in observed_species.items():
         sp = data['species']
@@ -171,6 +171,7 @@ def observe(x: int, y: int):
             'latin_name': sp['latin_name'],
             'category': sp['category'],
             'count': data['count'],
+            'locations': data['locations'],  # Include locations for map symbols
             'visual': sp['visual'],
             'tactile': sp['tactile'],
             'smell': sp['smell'],

@@ -1,5 +1,6 @@
 /**
  * Star Carr Mesolithic Scholar Simulator - Game Engine
+ * v2: Bigger cells, species symbols on map, hover observations
  */
 
 // Game state
@@ -7,15 +8,28 @@ const state = {
     config: null,
     playerX: 0,
     playerY: 0,
-    terrainCache: {},
-    currentObservations: null
+    currentObservations: null,
+    hoveredSpecies: null,
+    visibleSpeciesLocations: []
 };
 
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 8; // pixels per cell on screen
-const VIEW_RADIUS = 25; // cells to show around player
+const CELL_SIZE = 24;  // 3x bigger (was 8)
+const VIEW_RADIUS = 15;
+
+// Species symbols by category
+const SPECIES_SYMBOLS = {
+    tree: '🌳',
+    shrub: '🌿',
+    plant: '🌱',
+    large_herbivore: '🦌',
+    medium_herbivore: '🦫',
+    predator: '🐺',
+    aquatic: '🐟',
+    bird: '🦅'
+};
 
 // DOM elements
 const locationText = document.getElementById('location-text');
@@ -28,18 +42,13 @@ const observationsList = document.getElementById('observations-list');
  */
 async function init() {
     try {
-        // Load config
         const response = await fetch('/api/config');
         state.config = await response.json();
         
-        // Set player spawn
         state.playerX = state.config.spawn_x;
         state.playerY = state.config.spawn_y;
         
-        // Setup controls
         setupControls();
-        
-        // Initial render
         await updateView();
         
         console.log('Star Carr initialized', state.config);
@@ -58,41 +67,23 @@ function setupControls() {
         let dx = 0, dy = 0;
         
         switch(e.key) {
-            case 'ArrowUp':
-            case 'w':
-            case 'W':
-                dy = -1;
-                break;
-            case 'ArrowDown':
-            case 's':
-            case 'S':
-                dy = 1;
-                break;
-            case 'ArrowLeft':
-            case 'a':
-            case 'A':
-                dx = -1;
-                break;
-            case 'ArrowRight':
-            case 'd':
-            case 'D':
-                dx = 1;
-                break;
-            default:
-                return;
+            case 'ArrowUp': case 'w': case 'W': dy = -1; break;
+            case 'ArrowDown': case 's': case 'S': dy = 1; break;
+            case 'ArrowLeft': case 'a': case 'A': dx = -1; break;
+            case 'ArrowRight': case 'd': case 'D': dx = 1; break;
+            default: return;
         }
         
         e.preventDefault();
         movePlayer(dx, dy);
     });
     
-    // Mouse click on canvas
+    // Mouse click - move player
     canvas.addEventListener('click', (e) => {
         const rect = canvas.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
         const clickY = e.clientY - rect.top;
         
-        // Convert to grid coordinates
         const centerX = canvas.width / 2;
         const centerY = canvas.height / 2;
         
@@ -100,11 +91,47 @@ function setupControls() {
         const dy = Math.round((clickY - centerY) / CELL_SIZE);
         
         if (dx !== 0 || dy !== 0) {
-            // Move one step toward click
             const stepX = dx === 0 ? 0 : (dx > 0 ? 1 : -1);
             const stepY = dy === 0 ? 0 : (dy > 0 ? 1 : -1);
             movePlayer(stepX, stepY);
         }
+    });
+    
+    // Mouse hover - show species info
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        
+        const dx = Math.round((mouseX - centerX) / CELL_SIZE);
+        const dy = Math.round((mouseY - centerY) / CELL_SIZE);
+        
+        const worldX = state.playerX + dx;
+        const worldY = state.playerY + dy;
+        
+        const hoveredLoc = state.visibleSpeciesLocations.find(
+            loc => loc.x === worldX && loc.y === worldY
+        );
+        
+        if (hoveredLoc) {
+            if (state.hoveredSpecies !== hoveredLoc.species.id) {
+                state.hoveredSpecies = hoveredLoc.species.id;
+                renderObservations(state.currentObservations, hoveredLoc.species.id);
+            }
+        } else {
+            if (state.hoveredSpecies !== null) {
+                state.hoveredSpecies = null;
+                renderObservations(state.currentObservations, null);
+            }
+        }
+    });
+    
+    canvas.addEventListener('mouseleave', () => {
+        state.hoveredSpecies = null;
+        renderObservations(state.currentObservations, null);
     });
 }
 
@@ -115,7 +142,6 @@ async function movePlayer(dx, dy) {
     const newX = state.playerX + dx;
     const newY = state.playerY + dy;
     
-    // Bounds check
     if (newX < 0 || newX >= state.config.grid_cols ||
         newY < 0 || newY >= state.config.grid_rows) {
         return;
@@ -149,7 +175,6 @@ async function fetchObservations() {
  * Update entire view (map + observations)
  */
 async function updateView() {
-    // Fetch terrain for visible area
     const minX = Math.max(0, state.playerX - VIEW_RADIUS);
     const minY = Math.max(0, state.playerY - VIEW_RADIUS);
     const maxX = Math.min(state.config.grid_cols, state.playerX + VIEW_RADIUS + 1);
@@ -161,25 +186,27 @@ async function updateView() {
     ]);
     
     state.currentObservations = observations;
+    state.visibleSpeciesLocations = [];
     
-    renderMap(terrainData);
-    renderObservations(observations);
+    renderMap(terrainData, observations);
+    renderLocationInfo(observations);
+    renderObservations(observations, null);
 }
 
 /**
- * Render the map canvas
+ * Render the map canvas with species symbols
  */
-function renderMap(terrainData) {
+function renderMap(terrainData, observations) {
     const { min_x, min_y, cells } = terrainData;
     const visRadius = state.config.visibility_radius;
     
-    // Clear canvas
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
-    // Calculate offset to center player
     const offsetX = canvas.width / 2 - (state.playerX - min_x) * CELL_SIZE - CELL_SIZE / 2;
     const offsetY = canvas.height / 2 - (state.playerY - min_y) * CELL_SIZE - CELL_SIZE / 2;
+    
+    state.visibleSpeciesLocations = [];
     
     // Draw terrain cells
     for (let row = 0; row < cells.length; row++) {
@@ -187,7 +214,6 @@ function renderMap(terrainData) {
             const worldX = min_x + col;
             const worldY = min_y + row;
             
-            // Check if in visibility radius
             const dx = worldX - state.playerX;
             const dy = worldY - state.playerY;
             const dist = Math.sqrt(dx * dx + dy * dy);
@@ -196,16 +222,42 @@ function renderMap(terrainData) {
             const screenY = offsetY + row * CELL_SIZE;
             
             if (dist <= visRadius) {
-                // Visible - show terrain color
                 const terrainId = cells[row][col];
                 const terrain = state.config.terrain_types[terrainId];
                 ctx.fillStyle = terrain ? terrain.color : '#888';
             } else {
-                // Fog of war
                 ctx.fillStyle = '#2a2a3e';
             }
             
             ctx.fillRect(screenX, screenY, CELL_SIZE - 1, CELL_SIZE - 1);
+        }
+    }
+    
+    // Draw species symbols
+    for (const sp of observations.observations) {
+        if (sp.locations) {
+            for (const loc of sp.locations) {
+                const dx = loc.x - state.playerX;
+                const dy = loc.y - state.playerY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist <= visRadius) {
+                    const screenX = offsetX + (loc.x - min_x) * CELL_SIZE;
+                    const screenY = offsetY + (loc.y - min_y) * CELL_SIZE;
+                    
+                    const symbol = SPECIES_SYMBOLS[sp.category] || '?';
+                    ctx.font = `${CELL_SIZE - 6}px serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(symbol, screenX + CELL_SIZE/2, screenY + CELL_SIZE/2);
+                    
+                    state.visibleSpeciesLocations.push({
+                        x: loc.x,
+                        y: loc.y,
+                        species: sp
+                    });
+                }
+            }
         }
     }
     
@@ -215,57 +267,79 @@ function renderMap(terrainData) {
     
     ctx.fillStyle = '#ef4444';
     ctx.beginPath();
-    ctx.arc(playerScreenX + CELL_SIZE / 2, playerScreenY + CELL_SIZE / 2, CELL_SIZE / 2 + 2, 0, Math.PI * 2);
+    ctx.arc(playerScreenX + CELL_SIZE / 2, playerScreenY + CELL_SIZE / 2, CELL_SIZE / 3, 0, Math.PI * 2);
     ctx.fill();
     
-    // Draw visibility circle outline
+    // Draw visibility circle
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 1;
+    ctx.lineWidth = 2;
     ctx.beginPath();
     ctx.arc(canvas.width / 2, canvas.height / 2, visRadius * CELL_SIZE, 0, Math.PI * 2);
     ctx.stroke();
 }
 
 /**
- * Render observations panel
+ * Render location info under map
  */
-function renderObservations(data) {
-    // Update location
+function renderLocationInfo(data) {
     locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
-    terrainText.innerHTML = `<strong>${data.current_terrain.name.replace('_', ' ')}</strong>: ${data.current_terrain.description}`;
+    terrainText.innerHTML = `<strong>${data.current_terrain.name.replace(/_/g, ' ')}</strong>: ${data.current_terrain.description}`;
     
-    // Update visible terrains
     terrainList.innerHTML = data.visible_terrains.map(t => `
         <span class="terrain-badge" style="background-color: ${t.color}; color: ${getContrastColor(t.color)}">
-            ${t.name.replace('_', ' ')}
+            ${t.name.replace(/_/g, ' ')}
         </span>
     `).join('');
-    
-    // Update observations
-    if (data.observations.length === 0) {
+}
+
+/**
+ * Render observations panel
+ */
+function renderObservations(data, highlightId) {
+    if (!data || data.observations.length === 0) {
         observationsList.innerHTML = '<p class="placeholder">No notable species observed here. Keep exploring...</p>';
         return;
     }
     
-    observationsList.innerHTML = data.observations.map(sp => `
-        <div class="species-card">
+    let speciesToShow = data.observations;
+    
+    if (highlightId !== null) {
+        speciesToShow = data.observations.filter(sp => sp.id === highlightId);
+    } else {
+        speciesToShow = data.observations.slice(0, 3);
+    }
+    
+    if (speciesToShow.length === 0) {
+        observationsList.innerHTML = '<p class="placeholder">Hover over species symbols on map to observe...</p>';
+        return;
+    }
+    
+    observationsList.innerHTML = speciesToShow.map(sp => `
+        <div class="species-card ${highlightId === sp.id ? 'highlighted' : ''}">
             <div class="species-header">
+                <span class="species-symbol">${SPECIES_SYMBOLS[sp.category] || '?'}</span>
                 <h3>${sp.common_name}</h3>
                 <span class="latin-name">${sp.latin_name}</span>
-                <span class="category-badge ${sp.category}">${sp.category.replace('_', ' ')}</span>
+                <span class="category-badge ${sp.category}">${sp.category.replace(/_/g, ' ')}</span>
             </div>
-            ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo">` : ''}
+            ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo" onerror="this.style.display='none'">` : ''}
             <div class="species-details">
-                <p><strong>ðŸ‘ Visual:</strong> ${sp.visual}</p>
-                <p><strong>âœ‹ Touch:</strong> ${sp.tactile}</p>
-                <p><strong>ðŸ‘ƒ Smell:</strong> ${sp.smell}</p>
-                <p><strong>ðŸ‘‚ Sound:</strong> ${sp.sound}</p>
-                <p><strong>ðŸ  Habitat:</strong> ${sp.habitat}</p>
-                <p><strong>ðŸŒ¸ Season:</strong> ${sp.season_note}</p>
-                <p><strong>ðŸ”§ Uses:</strong> ${sp.uses}</p>
+                <p><strong>Visual:</strong> ${sp.visual}</p>
+                <p><strong>Touch:</strong> ${sp.tactile}</p>
+                <p><strong>Smell:</strong> ${sp.smell}</p>
+                <p><strong>Sound:</strong> ${sp.sound}</p>
+                <p><strong>Habitat:</strong> ${sp.habitat}</p>
+                <p><strong>Season:</strong> ${sp.season_note}</p>
+                <p><strong>Uses:</strong> ${sp.uses}</p>
             </div>
         </div>
     `).join('');
+    
+    if (highlightId === null && data.observations.length > 3) {
+        observationsList.innerHTML += `
+            <p class="more-species">+ ${data.observations.length - 3} more species nearby. Hover on map to explore.</p>
+        `;
+    }
 }
 
 /**
