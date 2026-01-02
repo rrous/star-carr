@@ -8,14 +8,26 @@ const state = {
     playerX: 0,
     playerY: 0,
     terrainCache: {},
-    currentObservations: null
+    currentObservations: null,
+    speciesMap: {} // species by cell: "x,y" -> species data
+};
+
+// Species category symbols
+const CATEGORY_SYMBOLS = {
+    tree: '🌲',
+    shrub: '🌿',
+    plant: '🌱',
+    large_herbivore: '🦌',
+    medium_herbivore: '🦫',
+    predator: '🐺',
+    aquatic: '🐟'
 };
 
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 8; // pixels per cell on screen
-const VIEW_RADIUS = 25; // cells to show around player
+const CELL_SIZE = 16; // pixels per cell on screen (doubled)
+const VIEW_RADIUS = 15; // cells to show around player (reduced)
 
 // DOM elements
 const locationText = document.getElementById('location-text');
@@ -106,6 +118,53 @@ function setupControls() {
             movePlayer(stepX, stepY);
         }
     });
+    
+    // Hover tooltip
+    const tooltip = document.createElement('div');
+    tooltip.id = 'map-tooltip';
+    tooltip.style.cssText = 'position:absolute;background:#1a1a2e;border:1px solid #86efac;padding:8px;border-radius:4px;display:none;pointer-events:none;z-index:100;font-size:0.85rem;max-width:200px;';
+    document.body.appendChild(tooltip);
+    
+    canvas.addEventListener('mousemove', (e) => {
+        const rect = canvas.getBoundingClientRect();
+        const mouseX = e.clientX - rect.left;
+        const mouseY = e.clientY - rect.top;
+        
+        // Convert to world coordinates
+        const centerX = canvas.width / 2;
+        const centerY = canvas.height / 2;
+        const dx = Math.round((mouseX - centerX) / CELL_SIZE);
+        const dy = Math.round((mouseY - centerY) / CELL_SIZE);
+        const worldX = state.playerX + dx;
+        const worldY = state.playerY + dy;
+        
+        // Check if within visibility
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist <= state.config.visibility_radius) {
+            const key = `${worldX},${worldY}`;
+            const species = state.speciesMap[key];
+            const terrainId = state.terrainCache[key];
+            const terrain = state.config.terrain_types[terrainId];
+            
+            let html = `<strong>[${worldX}, ${worldY}]</strong><br>`;
+            html += terrain ? terrain.name.replace('_', ' ') : 'unknown';
+            if (species) {
+                const symbol = CATEGORY_SYMBOLS[species.category] || '?';
+                html += `<br>${symbol} ${species.common_name}`;
+            }
+            
+            tooltip.innerHTML = html;
+            tooltip.style.left = (e.clientX + 15) + 'px';
+            tooltip.style.top = (e.clientY + 15) + 'px';
+            tooltip.style.display = 'block';
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+    
+    canvas.addEventListener('mouseout', () => {
+        tooltip.style.display = 'none';
+    });
 }
 
 /**
@@ -162,6 +221,25 @@ async function updateView() {
     
     state.currentObservations = observations;
     
+    // Build terrain cache
+    for (let row = 0; row < terrainData.cells.length; row++) {
+        for (let col = 0; col < terrainData.cells[row].length; col++) {
+            const worldX = terrainData.min_x + col;
+            const worldY = terrainData.min_y + row;
+            state.terrainCache[`${worldX},${worldY}`] = terrainData.cells[row][col];
+        }
+    }
+    
+    // Build species map from observations
+    state.speciesMap = {};
+    for (const sp of observations.observations) {
+        if (sp.locations) {
+            for (const loc of sp.locations) {
+                state.speciesMap[`${loc.x},${loc.y}`] = sp;
+            }
+        }
+    }
+    
     renderMap(terrainData);
     renderObservations(observations);
 }
@@ -200,12 +278,23 @@ function renderMap(terrainData) {
                 const terrainId = cells[row][col];
                 const terrain = state.config.terrain_types[terrainId];
                 ctx.fillStyle = terrain ? terrain.color : '#888';
+                ctx.fillRect(screenX, screenY, CELL_SIZE - 1, CELL_SIZE - 1);
+                
+                // Draw species symbol if present
+                const key = `${worldX},${worldY}`;
+                const species = state.speciesMap[key];
+                if (species) {
+                    const symbol = CATEGORY_SYMBOLS[species.category] || '?';
+                    ctx.font = `${CELL_SIZE - 4}px sans-serif`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(symbol, screenX + CELL_SIZE / 2, screenY + CELL_SIZE / 2);
+                }
             } else {
                 // Fog of war
                 ctx.fillStyle = '#2a2a3e';
+                ctx.fillRect(screenX, screenY, CELL_SIZE - 1, CELL_SIZE - 1);
             }
-            
-            ctx.fillRect(screenX, screenY, CELL_SIZE - 1, CELL_SIZE - 1);
         }
     }
     
@@ -234,11 +323,6 @@ function renderObservations(data) {
     locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
     terrainText.innerHTML = `<strong>${data.current_terrain.name.replace('_', ' ')}</strong>: ${data.current_terrain.description}`;
     
-    // Add terrain photo if available
-    if (data.current_terrain.photo_url) {
-        terrainText.innerHTML += `<br><img src="${data.current_terrain.photo_url}" alt="${data.current_terrain.name}" class="terrain-photo">`;
-    }
-    
     // Update visible terrains
     terrainList.innerHTML = data.visible_terrains.map(t => `
         <span class="terrain-badge" style="background-color: ${t.color}; color: ${getContrastColor(t.color)}">
@@ -261,13 +345,13 @@ function renderObservations(data) {
             </div>
             ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo">` : ''}
             <div class="species-details">
-                <p><strong>👁 Visual:</strong> ${sp.visual}</p>
-                <p><strong>✋ Touch:</strong> ${sp.tactile}</p>
-                <p><strong>👃 Smell:</strong> ${sp.smell}</p>
-                <p><strong>👂 Sound:</strong> ${sp.sound}</p>
-                <p><strong>🏠 Habitat:</strong> ${sp.habitat}</p>
-                <p><strong>🌸 Season:</strong> ${sp.season_note}</p>
-                <p><strong>🔧 Uses:</strong> ${sp.uses}</p>
+                <p><strong>ðŸ‘ Visual:</strong> ${sp.visual}</p>
+                <p><strong>âœ‹ Touch:</strong> ${sp.tactile}</p>
+                <p><strong>ðŸ‘ƒ Smell:</strong> ${sp.smell}</p>
+                <p><strong>ðŸ‘‚ Sound:</strong> ${sp.sound}</p>
+                <p><strong>ðŸ  Habitat:</strong> ${sp.habitat}</p>
+                <p><strong>ðŸŒ¸ Season:</strong> ${sp.season_note}</p>
+                <p><strong>ðŸ”§ Uses:</strong> ${sp.uses}</p>
             </div>
         </div>
     `).join('');

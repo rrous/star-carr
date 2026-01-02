@@ -125,6 +125,7 @@ def observe(x: int, y: int):
             "latin_name": sp["latin_name"],
             "category": sp["category"],
             "count": data["count"],
+            "locations": data["locations"],
             "visual": sp["visual"],
             "tactile": sp["tactile"],
             "smell": sp["smell"],
