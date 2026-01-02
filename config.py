@@ -19,18 +19,18 @@ SPECIES_DENSITY = 0.3
 
 # Terrain types
 TERRAIN_TYPES = {
-    0: {"name": "deep_water", "color": "#1e3a8a", "description": "Deep lake water, dark and cold", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/95/Aerial_View_of_Lake_Bled.jpg/320px-Aerial_View_of_Lake_Bled.jpg"},
-    1: {"name": "shallow_water", "color": "#3b82f6", "description": "Shallow lake margins, wading depth", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/eb/Swamp_lake_margins.jpg/320px-Swamp_lake_margins.jpg"},
-    2: {"name": "reed_bed", "color": "#a3e635", "description": "Dense stands of tall reeds", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Phragmites_australis_-_reed_bed.jpg/320px-Phragmites_australis_-_reed_bed.jpg"},
-    3: {"name": "wetland", "color": "#84cc16", "description": "Marshy ground with sedges and rushes", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d5/Wetland_-_geograph.org.uk_-_1265382.jpg/320px-Wetland_-_geograph.org.uk_-_1265382.jpg"},
-    4: {"name": "carr_woodland", "color": "#65a30d", "description": "Wet woodland of willow and alder", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/Carr_woodland_-_geograph.org.uk_-_1257615.jpg/320px-Carr_woodland_-_geograph.org.uk_-_1257615.jpg"},
-    5: {"name": "birch_woodland", "color": "#16a34a", "description": "Open birch-dominated forest", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Birch_forest_in_Russia.jpg/320px-Birch_forest_in_Russia.jpg"},
-    6: {"name": "mixed_woodland", "color": "#15803d", "description": "Dense mixed deciduous woodland", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ab/Mixed_forest_in_autumn.jpg/320px-Mixed_forest_in_autumn.jpg"},
-    7: {"name": "grassland", "color": "#86efac", "description": "Open grassy clearings", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Grassland_in_England.jpg/320px-Grassland_in_England.jpg"},
-    8: {"name": "platform", "color": "#92400e", "description": "Star Carr wooden platform - occupation site", "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Star_Carr_wooden_platform.jpg/320px-Star_Carr_wooden_platform.jpg"},
+    0: {"name": "deep_water", "color": "#1e3a8a", "description": "Deep lake water, dark and cold", "photo_url": "/static/images/terrain/deep_water_spring.jpg"},
+    1: {"name": "shallow_water", "color": "#3b82f6", "description": "Shallow lake margins, wading depth", "photo_url": "/static/images/terrain/shallow_water_spring.jpg"},
+    2: {"name": "reed_bed", "color": "#a3e635", "description": "Dense stands of tall reeds", "photo_url": "/static/images/terrain/reed_bed_spring.jpg"},
+    3: {"name": "wetland", "color": "#84cc16", "description": "Marshy ground with sedges and rushes", "photo_url": "/static/images/terrain/wetland_spring.jpg"},
+    4: {"name": "carr_woodland", "color": "#65a30d", "description": "Wet woodland of willow and alder", "photo_url": "/static/images/terrain/carr_woodland_spring.jpg"},
+    5: {"name": "birch_woodland", "color": "#16a34a", "description": "Open birch-dominated forest", "photo_url": "/static/images/terrain/birch_woodland_spring.jpg"},
+    6: {"name": "mixed_woodland", "color": "#15803d", "description": "Dense mixed deciduous woodland", "photo_url": "/static/images/terrain/mixed_woodland_spring.jpg"},
+    7: {"name": "grassland", "color": "#86efac", "description": "Open grassy clearings", "photo_url": "/static/images/terrain/grassland_spring.jpg"},
+    8: {"name": "platform", "color": "#92400e", "description": "Star Carr wooden platform - occupation site", "photo_url": "/static/images/terrain/platform_spring.jpg"},
 }
 
-# Species database - ALL WITH PHOTO URLs
+# Species database
 SPECIES_DATABASE = {
     1: {
         "id": 1,
@@ -46,7 +46,7 @@ SPECIES_DATABASE = {
         "uses": "Bark for containers, tar production, tinder. Wood for tools, firewood. Sap drinkable.",
         "abundance": "very_common",
         "terrain_preference": [5, 6, 7],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8c/Betula_pendula_001.jpg/220px-Betula_pendula_001.jpg"
+        "photo_url": "/static/images/species/birch.jpg"
     },
     2: {
         "id": 2,
@@ -62,7 +62,7 @@ SPECIES_DATABASE = {
         "uses": "Flexible stems for basketry, fish traps, shelter frames. Bark contains pain-relieving compounds.",
         "abundance": "common",
         "terrain_preference": [3, 4],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Salix_alba_Morton.jpg/220px-Salix_alba_Morton.jpg"
+        "photo_url": "/static/images/species/willow.jpg"
     },
     3: {
         "id": 3,
@@ -78,7 +78,7 @@ SPECIES_DATABASE = {
         "uses": "Wood resists rot underwater - ideal for platforms, posts. Good charcoal for smelting.",
         "abundance": "common",
         "terrain_preference": [3, 4],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/2/2e/Alnus_glutinosa_008.jpg/220px-Alnus_glutinosa_008.jpg"
+        "photo_url": "/static/images/species/alder.jpg"
     },
     4: {
         "id": 4,
@@ -94,9 +94,7 @@ SPECIES_DATABASE = {
         "uses": "Light soft wood for carving, paddles. Inner bark edible in emergency.",
         "abundance": "occasional",
         "terrain_preference": [5, 6, 7],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3e/Populus_tremula_-_trembling_aspen_-_aspen_-_52281825394.jpg/220px-Populus_tremula_-_trembling_aspen_-_aspen_-_52281825394.jpg"
-    },
-    5: {
+        "photo_url": "/static/images/species/aspen.jpg" {
         "id": 5,
         "latin_name": "Corylus avellana",
         "common_name": "Hazel",
@@ -110,9 +108,7 @@ SPECIES_DATABASE = {
         "uses": "Nuts highly nutritious (autumn). Straight rods for tools, traps, shelter frames. Excellent firewood.",
         "abundance": "common",
         "terrain_preference": [5, 6],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/af/Corylus_avellana_-_hazel_-_hazelaar_-_Fumay.jpg/220px-Corylus_avellana_-_hazel_-_hazelaar_-_Fumay.jpg"
-    },
-    6: {
+        "photo_url": "/static/images/species/hazel.jpg" {
         "id": 6,
         "latin_name": "Phragmites australis",
         "common_name": "Common Reed",
@@ -126,7 +122,7 @@ SPECIES_DATABASE = {
         "uses": "Stems for thatching, matting, arrow shafts. Roots edible. Dense beds shelter fish and fowl.",
         "abundance": "abundant",
         "terrain_preference": [2],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Phragmites_australis_Cam.jpg/220px-Phragmites_australis_Cam.jpg"
+        "photo_url": "/static/images/species/reed.jpg"
     },
     7: {
         "id": 7,
@@ -142,9 +138,7 @@ SPECIES_DATABASE = {
         "uses": "Young leaves edible when cooked (very nutritious). Stem fibers make strong cordage and cloth.",
         "abundance": "common",
         "terrain_preference": [7, 8],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/Urtica_dioica_-_stinging_nettle_-_Grote_brandnetel.jpg/220px-Urtica_dioica_-_stinging_nettle_-_Grote_brandnetel.jpg"
-    },
-    8: {
+        "photo_url": "/static/images/species/nettle.jpg" {
         "id": 8,
         "latin_name": "Carex spp.",
         "common_name": "Sedge",
@@ -158,9 +152,7 @@ SPECIES_DATABASE = {
         "uses": "Leaves for weaving, cordage, thatching. Tussocks indicate firm(ish) ground in marshes.",
         "abundance": "abundant",
         "terrain_preference": [2, 3, 4],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f1/Carex_acutiformis_-_lesser_pond_sedge_-_moeraszegge_-_01.jpg/220px-Carex_acutiformis_-_lesser_pond_sedge_-_moeraszegge_-_01.jpg"
-    },
-    10: {
+        "photo_url": "/static/images/species/sedge.jpg" {
         "id": 10,
         "latin_name": "Cervus elaphus",
         "common_name": "Red Deer",
@@ -174,7 +166,7 @@ SPECIES_DATABASE = {
         "uses": "PRIMARY PREY: ~80kg meat per adult. Antler for tools, bone for needles/points, hide for clothing, sinew for thread.",
         "abundance": "common",
         "terrain_preference": [5, 6, 7],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Cervus_elaphus_Luc_Viatour_6.jpg/220px-Cervus_elaphus_Luc_Viatour_6.jpg"
+        "photo_url": "/static/images/species/red_deer.jpg"
     },
     11: {
         "id": 11,
@@ -190,7 +182,7 @@ SPECIES_DATABASE = {
         "uses": "Enormous meat yield ~200kg. Hide extremely thick and warm. Antler for large tools.",
         "abundance": "occasional",
         "terrain_preference": [2, 3, 4],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8b/Moose_superior.jpg/220px-Moose_superior.jpg"
+        "photo_url": "/static/images/species/elk.jpg"
     },
     12: {
         "id": 12,
@@ -206,10 +198,9 @@ SPECIES_DATABASE = {
         "uses": "Smaller meat yield ~12kg but tender. Hide soft and supple for fine work.",
         "abundance": "common",
         "terrain_preference": [5, 6],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/Capreolus_capreolus_2_-_Bournemouth.jpg/220px-Capreolus_capreolus_2_-_Bournemouth.jpg"
+        "photo_url": "/static/images/species/roe_deer.jpg"
     },
     13: {
-        "id": 13,
         "latin_name": "Bos primigenius",
         "common_name": "Aurochs",
         "category": "large_herbivore",
@@ -222,10 +213,9 @@ SPECIES_DATABASE = {
         "uses": "Massive meat yield ~350kg but VERY DANGEROUS to hunt. Hide thick, horns for containers.",
         "abundance": "rare",
         "terrain_preference": [7, 3],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6e/Ur-painting.jpg/220px-Ur-painting.jpg"
+        "photo_url": "/static/images/species/aurochs.jpg"
     },
     14: {
-        "id": 14,
         "latin_name": "Sus scrofa",
         "common_name": "Wild Boar",
         "category": "large_herbivore",
@@ -238,10 +228,9 @@ SPECIES_DATABASE = {
         "uses": "Good meat yield ~40kg, rich fat. Hide for leather. Tusks and bones for tools. DANGEROUS when cornered.",
         "abundance": "occasional",
         "terrain_preference": [4, 5, 6],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/3/3f/Sus_scrofa_1_-_Whipsnade_Zoo.jpg/220px-Sus_scrofa_1_-_Whipsnade_Zoo.jpg"
+        "photo_url": "/static/images/species/wild_boar.jpg"
     },
     15: {
-        "id": 15,
         "latin_name": "Castor fiber",
         "common_name": "European Beaver",
         "category": "medium_herbivore",
@@ -254,10 +243,9 @@ SPECIES_DATABASE = {
         "uses": "Highly valued fur (waterproof). Castoreum for medicine/bait. Meat edible. Dam pools trap fish.",
         "abundance": "occasional",
         "terrain_preference": [1, 2, 4],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/Beaver_-_Castor_fiber_-_01.jpg/220px-Beaver_-_Castor_fiber_-_01.jpg"
+        "photo_url": "/static/images/species/beaver.jpg"
     },
     20: {
-        "id": 20,
         "latin_name": "Canis lupus",
         "common_name": "Wolf",
         "category": "predator",
@@ -270,10 +258,9 @@ SPECIES_DATABASE = {
         "uses": "Fur warm but spiritually significant. Competitor for deer. Potential THREAT to humans especially to children.",
         "abundance": "rare",
         "terrain_preference": [5, 6, 7],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/68/Eurasian_wolf_2.jpg/220px-Eurasian_wolf_2.jpg"
+        "photo_url": "/static/images/species/wolf.jpg"
     },
     21: {
-        "id": 21,
         "latin_name": "Ursus arctos",
         "common_name": "Brown Bear",
         "category": "predator",
@@ -286,10 +273,9 @@ SPECIES_DATABASE = {
         "uses": "Fur highly prized. Fat rendered for many uses. EXTREMELY DANGEROUS - avoid at all costs.",
         "abundance": "very_rare",
         "terrain_preference": [5, 6],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Kamchatka_Brown_Bear_near_Dvuhyurtochnoe_on_2015-07-23.jpg/220px-Kamchatka_Brown_Bear_near_Dvuhyurtochnoe_on_2015-07-23.jpg"
+        "photo_url": "/static/images/species/brown_bear.jpg"
     },
     30: {
-        "id": 30,
         "latin_name": "Esox lucius",
         "common_name": "Pike",
         "category": "aquatic",
@@ -302,7 +288,7 @@ SPECIES_DATABASE = {
         "uses": "Good eating despite bones - ~2-5kg typical. Y-bones require careful preparation.",
         "abundance": "common",
         "terrain_preference": [1, 2],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/9/93/Esox_lucius_ZOO_1.jpg/220px-Esox_lucius_ZOO_1.jpg"
+        "photo_url": "/static/images/species/pike.jpg"
     },
     31: {
         "id": 31,
@@ -318,7 +304,7 @@ SPECIES_DATABASE = {
         "uses": "Meat, eggs, feathers (fletching, bedding), down (insulation). Can be netted, trapped, or arrows.",
         "abundance": "abundant",
         "terrain_preference": [1, 2, 3],
-        "photo_url": "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/Anas_platyrhynchos_male_female_quadrat.jpg/220px-Anas_platyrhynchos_male_female_quadrat.jpg"
+        "photo_url": "/static/images/species/waterfowl.jpg"
     }
 }
 
