@@ -94,9 +94,19 @@ SPECIES_DATABASE = {
         "uses": "Light soft wood for carving, paddles. Inner bark edible in emergency.",
         "abundance": "occasional",
         "terrain_preference": [5, 6, 7],
+<<<<<<< HEAD
         "photo_url": "/static/images/species/aspen.jpg"
     },
     5: {
+=======
+<<<<<<< HEAD
+        "photo_url": "/static/images/species/aspen.jpg"
+    },
+    5: {
+=======
+        "photo_url": "/static/images/species/aspen.jpg" {
+>>>>>>> cd6ee253de950c85b9b4198be40c3ab3c991c25b
+>>>>>>> e4d76d14aeeaaff531d70287a9a799fcec5452ee
         "id": 5,
         "latin_name": "Corylus avellana",
         "common_name": "Hazel",
@@ -110,9 +120,19 @@ SPECIES_DATABASE = {
         "uses": "Nuts highly nutritious (autumn). Straight rods for tools, traps, shelter frames. Excellent firewood.",
         "abundance": "common",
         "terrain_preference": [5, 6],
+<<<<<<< HEAD
         "photo_url": "/static/images/species/hazel.jpg"
     },
     6: {
+=======
+<<<<<<< HEAD
+        "photo_url": "/static/images/species/hazel.jpg"
+    },
+    6: {
+=======
+        "photo_url": "/static/images/species/hazel.jpg" {
+>>>>>>> cd6ee253de950c85b9b4198be40c3ab3c991c25b
+>>>>>>> e4d76d14aeeaaff531d70287a9a799fcec5452ee
         "id": 6,
         "latin_name": "Phragmites australis",
         "common_name": "Common Reed",
@@ -142,9 +162,19 @@ SPECIES_DATABASE = {
         "uses": "Young leaves edible when cooked (very nutritious). Stem fibers make strong cordage and cloth.",
         "abundance": "common",
         "terrain_preference": [7, 8],
+<<<<<<< HEAD
         "photo_url": "/static/images/species/nettle.jpg"
     },
     8: {
+=======
+<<<<<<< HEAD
+        "photo_url": "/static/images/species/nettle.jpg"
+    },
+    8: {
+=======
+        "photo_url": "/static/images/species/nettle.jpg" {
+>>>>>>> cd6ee253de950c85b9b4198be40c3ab3c991c25b
+>>>>>>> e4d76d14aeeaaff531d70287a9a799fcec5452ee
         "id": 8,
         "latin_name": "Carex spp.",
         "common_name": "Sedge",
@@ -158,9 +188,19 @@ SPECIES_DATABASE = {
         "uses": "Leaves for weaving, cordage, thatching. Tussocks indicate firm(ish) ground in marshes.",
         "abundance": "abundant",
         "terrain_preference": [2, 3, 4],
+<<<<<<< HEAD
         "photo_url": "/static/images/species/sedge.jpg"
     },
     10: {
+=======
+<<<<<<< HEAD
+        "photo_url": "/static/images/species/sedge.jpg"
+    },
+    10: {
+=======
+        "photo_url": "/static/images/species/sedge.jpg" {
+>>>>>>> cd6ee253de950c85b9b4198be40c3ab3c991c25b
+>>>>>>> e4d76d14aeeaaff531d70287a9a799fcec5452ee
         "id": 10,
         "latin_name": "Cervus elaphus",
         "common_name": "Red Deer",
