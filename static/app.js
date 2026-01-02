@@ -26,8 +26,8 @@ const CATEGORY_SYMBOLS = {
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 16; // pixels per cell on screen (doubled)
-const VIEW_RADIUS = 15; // cells to show around player (reduced)
+const CELL_SIZE = 24; // pixels per cell on screen
+const VIEW_RADIUS = 12; // cells to show around player
 
 // DOM elements
 const locationText = document.getElementById('location-text');
@@ -141,6 +141,10 @@ function setupControls() {
         // Check if within visibility
         const dist = Math.sqrt(dx * dx + dy * dy);
         if (dist <= state.config.visibility_radius) {
+            // Show hovered cell in observations panel
+            showHoveredCell(worldX, worldY);
+            
+            // Tooltip
             const key = `${worldX},${worldY}`;
             const species = state.speciesMap[key];
             const terrainId = state.terrainCache[key];
@@ -159,11 +163,13 @@ function setupControls() {
             tooltip.style.display = 'block';
         } else {
             tooltip.style.display = 'none';
+            clearHoveredCell();
         }
     });
     
     canvas.addEventListener('mouseout', () => {
         tooltip.style.display = 'none';
+        clearHoveredCell();
     });
 }
 
@@ -285,7 +291,7 @@ function renderMap(terrainData) {
                 const species = state.speciesMap[key];
                 if (species) {
                     const symbol = CATEGORY_SYMBOLS[species.category] || '?';
-                    ctx.font = `${CELL_SIZE - 4}px sans-serif`;
+                    ctx.font = `${CELL_SIZE - 6}px sans-serif`;
                     ctx.textAlign = 'center';
                     ctx.textBaseline = 'middle';
                     ctx.fillText(symbol, screenX + CELL_SIZE / 2, screenY + CELL_SIZE / 2);
@@ -316,12 +322,17 @@ function renderMap(terrainData) {
 }
 
 /**
- * Render observations panel
+ * Render observations panel - current cell only
  */
 function renderObservations(data) {
     // Update location
     locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
     terrainText.innerHTML = `<strong>${data.current_terrain.name.replace('_', ' ')}</strong>: ${data.current_terrain.description}`;
+    
+    // Show terrain photo if available
+    if (data.current_terrain.photo_url) {
+        terrainText.innerHTML += `<br><img src="${data.current_terrain.photo_url}" alt="${data.current_terrain.name}" class="terrain-photo">`;
+    }
     
     // Update visible terrains
     terrainList.innerHTML = data.visible_terrains.map(t => `
@@ -330,33 +341,73 @@ function renderObservations(data) {
         </span>
     `).join('');
     
-    // Update observations
-    if (data.observations.length === 0) {
-        observationsList.innerHTML = '<p class="placeholder">No notable species observed here. Keep exploring...</p>';
-        return;
-    }
+    // Show only species at current cell
+    const currentCellSpecies = data.observations.filter(sp => 
+        sp.locations && sp.locations.some(loc => loc.x === data.location.x && loc.y === data.location.y)
+    );
     
-    observationsList.innerHTML = data.observations.map(sp => `
+    if (currentCellSpecies.length === 0) {
+        observationsList.innerHTML = '<p class="placeholder">No species at current location.</p>';
+    } else {
+        observationsList.innerHTML = '<h3>Current Cell:</h3>' + currentCellSpecies.map(sp => renderSpeciesCard(sp)).join('');
+    }
+}
+
+/**
+ * Render a single species card
+ */
+function renderSpeciesCard(sp) {
+    const symbol = CATEGORY_SYMBOLS[sp.category] || '?';
+    return `
         <div class="species-card">
             <div class="species-header">
+                <span class="species-symbol">${symbol}</span>
                 <h3>${sp.common_name}</h3>
                 <span class="latin-name">${sp.latin_name}</span>
-                <span class="category-badge ${sp.category}">${sp.category.replace('_', ' ')}</span>
             </div>
             ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo">` : ''}
             <div class="species-details">
-                <p><strong>ðŸ‘ Visual:</strong> ${sp.visual}</p>
-                <p><strong>âœ‹ Touch:</strong> ${sp.tactile}</p>
-                <p><strong>ðŸ‘ƒ Smell:</strong> ${sp.smell}</p>
-                <p><strong>ðŸ‘‚ Sound:</strong> ${sp.sound}</p>
-                <p><strong>ðŸ  Habitat:</strong> ${sp.habitat}</p>
-                <p><strong>ðŸŒ¸ Season:</strong> ${sp.season_note}</p>
-                <p><strong>ðŸ”§ Uses:</strong> ${sp.uses}</p>
+                <p><strong>Visual:</strong> ${sp.visual}</p>
+                <p><strong>Touch:</strong> ${sp.tactile}</p>
+                <p><strong>Smell:</strong> ${sp.smell}</p>
+                <p><strong>Sound:</strong> ${sp.sound}</p>
+                <p><strong>Habitat:</strong> ${sp.habitat}</p>
+                <p><strong>Season:</strong> ${sp.season_note}</p>
+                <p><strong>Uses:</strong> ${sp.uses}</p>
             </div>
         </div>
-    `).join('');
+    `;
 }
 
+/**
+ * Show hovered cell info
+ */
+function showHoveredCell(worldX, worldY) {
+    const key = `${worldX},${worldY}`;
+    const species = state.speciesMap[key];
+    const terrainId = state.terrainCache[key];
+    const terrain = state.config.terrain_types[terrainId];
+    
+    let html = `<h3>Hovered [${worldX}, ${worldY}] - ${terrain ? terrain.name.replace('_', ' ') : 'unknown'}:</h3>`;
+    if (species) {
+        html += renderSpeciesCard(species);
+    } else {
+        html += '<p class="placeholder">No species here.</p>';
+    }
+    
+    let hoveredDiv = document.getElementById('hovered-cell');
+    if (!hoveredDiv) {
+        hoveredDiv = document.createElement('div');
+        hoveredDiv.id = 'hovered-cell';
+        observationsList.appendChild(hoveredDiv);
+    }
+    hoveredDiv.innerHTML = html;
+}
+
+function clearHoveredCell() {
+    const hoveredDiv = document.getElementById('hovered-cell');
+    if (hoveredDiv) hoveredDiv.innerHTML = '';
+}
 /**
  * Get contrasting text color for background
  */

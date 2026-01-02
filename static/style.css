@@ -175,11 +175,16 @@ main {
 }
 
 .terrain-photo {
-    max-width: 280px;
-    max-height: 180px;
+    max-width: 300px;
+    max-height: 200px;
     border-radius: 4px;
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     border: 1px solid #333;
+}
+
+.species-symbol {
+    font-size: 1.5rem;
+    margin-right: 0.5rem;
 }
 
 .species-details p {
