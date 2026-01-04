@@ -1,147 +1,111 @@
-# Star Carr Terrain Configuration
-# Grid: 200 cols (E-W) × 250 rows (N-S), 10m per cell
+# terrain_init.yaml
+# Terrain zones and types for Star Carr 9000 BCE
 
 grid:
   cols: 200
   rows: 250
   cell_size_m: 10
-  origin_easting: 502500
-  origin_northing: 484500
+  origin_e: 502500
+  origin_n: 484500
 
-defaults:
-  terrain: birch_woodland
-  
-zones:
-   
-  # Wetlands
-  - name: western_wetland
-    terrain: wetland
-    shape: polygon
-    points: [[60, 40], [100, 30], [110, 80], [90, 120], [50, 100], [40, 60]]
-    
-  - name: southern_marsh
-    terrain: wetland
-    shape: rect
-    bounds: [80, 140, 160, 180]
-    
-  # Carr woodland
-  - name: western_carr
-    terrain: carr_woodland
-    shape: polygon
-    points: [[20, 30], [60, 20], [80, 60], [70, 120], [30, 110], [10, 50]]
-    
-  - name: lake_edge_carr
-    terrain: carr_woodland
-    shape: ellipse
-    center: [160, 80]
-    radius: [85, 105]
-    
-  # Woodland
-  - name: southern_birch
-    terrain: birch_woodland
-    shape: rect
-    bounds: [0, 180, 120, 250]
-    
-  - name: southwest_mixed
-    terrain: mixed_woodland
-    shape: polygon
-    points: [[0, 200], [60, 190], [80, 250], [0, 250]]
-    
-  - name: western_fringe
-    terrain: mixed_woodland
-    shape: rect
-    bounds: [0, 50, 25, 180]
-    
-  # Grassland
-  - name: southwest_clearing
-    terrain: grassland
-    shape: ellipse
-    center: [40, 220]
-    radius: [25, 20]
-    
-  - name: western_clearing
-    terrain: grassland
-    shape: ellipse
-    center: [30, 150]
-    radius: [15, 20]
-    
-  - name: platform_clearing
-    terrain: grassland
-    shape: rect
-    bounds: [15, 38, 35, 55]
+spawn:
+  x: 20
+  y: 42
 
-   # Lake Flixton (partial - extends beyond map to east)
-  
-  - name: reed_belt
-    terrain: reed_bed
-    shape: ellipse
-    center: [150, 80]
-    radius: [70, 90]
-
-  - name: lake_shallow
-    terrain: shallow_water
-    shape: ellipse
-    center: [150, 80]
-    radius: [60, 75]
-
-  - name: lake_deep
-    terrain: deep_water
-    shape: ellipse
-    center: [150, 80]
-    radius: [50, 60]
-
-  # Star Carr Platform
-  - name: star_carr_platform
-    terrain: platform
-    shape: rect
-    bounds: [18, 40, 24, 46]
+visibility_radius: 3
 
 terrain_types:
-  deep_water:
-    id: 0
+  0:
+    name: deep_water
     color: "#1e3a8a"
     description: "Deep lake water, dark and cold"
-    
-  shallow_water:
-    id: 1
+  1:
+    name: shallow_water
     color: "#3b82f6"
     description: "Shallow lake margins, wading depth"
-    
-  reed_bed:
-    id: 2
+  2:
+    name: reed_bed
     color: "#a3e635"
     description: "Dense stands of tall reeds"
-    
-  wetland:
-    id: 3
+  3:
+    name: wetland
     color: "#84cc16"
     description: "Marshy ground with sedges and rushes"
-    
-  carr_woodland:
-    id: 4
+  4:
+    name: carr_woodland
     color: "#65a30d"
     description: "Wet woodland of willow and alder"
-    
-  birch_woodland:
-    id: 5
+  5:
+    name: birch_woodland
     color: "#16a34a"
     description: "Open birch-dominated forest"
-    
-  mixed_woodland:
-    id: 6
+  6:
+    name: mixed_woodland
     color: "#15803d"
     description: "Dense mixed deciduous woodland"
-    
-  grassland:
-    id: 7
+  7:
+    name: grassland
     color: "#86efac"
     description: "Open grassy clearings"
-    
-  platform:
-    id: 8
+  8:
+    name: platform
     color: "#92400e"
     description: "Star Carr wooden platform - occupation site"
 
-spawn:
-  x: 21
-  y: 43
+# Lake generation parameters
+lake:
+  center_x: 120
+  center_y: 125
+  radius_x: 60
+  radius_y: 80
+  noise_range: [-0.15, 0.15]
+  
+  # Distance thresholds for terrain rings
+  zones:
+    - max_dist: 0.5
+      terrain: deep_water
+    - max_dist: 0.7
+      terrain: shallow_water
+    - max_dist: 0.85
+      terrain: reed_bed
+    - max_dist: 1.0
+      terrain: wetland
+    - max_dist: 1.2
+      terrain: carr_woodland
+    - max_dist: 1.5
+      terrain: [birch_woodland, mixed_woodland]
+      weights: [0.6, 0.4]
+
+# Default terrain for areas beyond lake influence
+default_terrain:
+  options: [grassland, birch_woodland, mixed_woodland]
+  weights: [0.3, 0.3, 0.4]
+
+# Grassland patches
+grassland_patches:
+  count: 5
+  region:
+    x: [10, 50]
+    y: [180, 240]
+  radius: [5, 15]
+
+# Corridors
+corridors:
+  water_edge:
+    description: "Zone along water boundaries"
+    width: 3
+    source_terrain: [deep_water, shallow_water]
+    color: "#3b82f680"
+  
+  ecotone:
+    description: "Terrain transition zones"
+    width: 2
+    color: "#f59e0b80"
+  
+  game_trail:
+    description: "Animal movement paths"
+    count: 5
+    endpoints:
+      from: [shallow_water, reed_bed]
+      to: [birch_woodland, mixed_woodland]
+    color: "#8b5cf680"

@@ -1,6 +1,6 @@
 /**
  * Star Carr Mesolithic Scholar Simulator - Game Engine
- * v2: Bigger cells, species symbols on map, hover observations
+ * With god mode, revealed cells memory, and corridor visualization.
  */
 
 // Game state
@@ -9,33 +9,37 @@ const state = {
     playerX: 0,
     playerY: 0,
     currentObservations: null,
-    hoveredSpecies: null,
-    visibleSpeciesLocations: []
+    revealedCells: new Set(), // Persists during session
+    godMode: false,
+    showCorridors: true,
+    showSigns: true,
+    showAllTerrain: false,
+    corridorData: null,
+    allSignsData: null,
+    timeOfDay: 'midday'
 };
 
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 24;  // 3x bigger (was 8)
-const VIEW_RADIUS = 15;
-
-// Species symbols by category
-const SPECIES_SYMBOLS = {
-    tree: '🌳',
-    shrub: '🌿',
-    plant: '🌱',
-    large_herbivore: '🦌',
-    medium_herbivore: '🦫',
-    predator: '🐺',
-    aquatic: '🐟',
-    bird: '🦅'
-};
+const CELL_SIZE = 8;
+const VIEW_RADIUS = 25;
 
 // DOM elements
 const locationText = document.getElementById('location-text');
 const terrainText = document.getElementById('terrain-text');
+const corridorText = document.getElementById('corridor-text');
 const terrainList = document.getElementById('terrain-list');
+const signsList = document.getElementById('signs-list');
 const observationsList = document.getElementById('observations-list');
+const godModeCheckbox = document.getElementById('god-mode-checkbox');
+const godModePanel = document.getElementById('god-mode-panel');
+const showCorridorsCheckbox = document.getElementById('show-corridors');
+const showSignsCheckbox = document.getElementById('show-signs');
+const showAllTerrainCheckbox = document.getElementById('show-all-terrain');
+const timeSelect = document.getElementById('time-select');
+const corridorLegend = document.getElementById('corridor-legend');
+const predatorInfo = document.getElementById('predator-info');
 
 /**
  * Initialize the game
@@ -47,9 +51,15 @@ async function init() {
         
         state.playerX = state.config.spawn_x;
         state.playerY = state.config.spawn_y;
+        state.timeOfDay = state.config.time_of_day || 'midday';
+        
+        timeSelect.value = state.timeOfDay;
         
         setupControls();
         await updateView();
+        
+        // Show predator presence in god mode
+        updatePredatorInfo();
         
         console.log('Star Carr initialized', state.config);
     } catch (error) {
@@ -59,10 +69,10 @@ async function init() {
 }
 
 /**
- * Setup keyboard and mouse controls
+ * Setup all controls
  */
 function setupControls() {
-    // Keyboard
+    // Keyboard movement
     document.addEventListener('keydown', (e) => {
         let dx = 0, dy = 0;
         
@@ -78,7 +88,7 @@ function setupControls() {
         movePlayer(dx, dy);
     });
     
-    // Mouse click - move player
+    // Mouse click
     canvas.addEventListener('click', (e) => {
         const rect = canvas.getBoundingClientRect();
         const clickX = e.clientX - rect.left;
@@ -97,46 +107,103 @@ function setupControls() {
         }
     });
     
-    // Mouse hover - show species info
-    canvas.addEventListener('mousemove', (e) => {
-        const rect = canvas.getBoundingClientRect();
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+    // God mode toggle
+    godModeCheckbox.addEventListener('change', async (e) => {
+        state.godMode = e.target.checked;
+        godModePanel.classList.toggle('hidden', !state.godMode);
         
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        
-        const dx = Math.round((mouseX - centerX) / CELL_SIZE);
-        const dy = Math.round((mouseY - centerY) / CELL_SIZE);
-        
-        const worldX = state.playerX + dx;
-        const worldY = state.playerY + dy;
-        
-        const hoveredLoc = state.visibleSpeciesLocations.find(
-            loc => loc.x === worldX && loc.y === worldY
-        );
-        
-        if (hoveredLoc) {
-            if (state.hoveredSpecies !== hoveredLoc.species.id) {
-                state.hoveredSpecies = hoveredLoc.species.id;
-                renderObservations(state.currentObservations, hoveredLoc.species.id);
-            }
-        } else {
-            if (state.hoveredSpecies !== null) {
-                state.hoveredSpecies = null;
-                renderObservations(state.currentObservations, null);
-            }
+        if (state.godMode && !state.corridorData) {
+            await loadGodModeData();
         }
+        
+        renderMap(state.lastTerrainData);
     });
     
-    canvas.addEventListener('mouseleave', () => {
-        state.hoveredSpecies = null;
-        renderObservations(state.currentObservations, null);
+    // God mode options
+    showCorridorsCheckbox.addEventListener('change', (e) => {
+        state.showCorridors = e.target.checked;
+        renderMap(state.lastTerrainData);
+    });
+    
+    showSignsCheckbox.addEventListener('change', (e) => {
+        state.showSigns = e.target.checked;
+        renderMap(state.lastTerrainData);
+    });
+    
+    showAllTerrainCheckbox.addEventListener('change', (e) => {
+        state.showAllTerrain = e.target.checked;
+        renderMap(state.lastTerrainData);
+    });
+    
+    // Time selector
+    timeSelect.addEventListener('change', async (e) => {
+        state.timeOfDay = e.target.value;
+        
+        await fetch('/api/time', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({time_of_day: state.timeOfDay})
+        });
+        
+        await updateView();
     });
 }
 
 /**
- * Move player by delta
+ * Load god mode data (corridors, all signs)
+ */
+async function loadGodModeData() {
+    try {
+        const [corridorRes, signsRes] = await Promise.all([
+            fetch('/api/god_mode/corridors'),
+            fetch('/api/god_mode/signs')
+        ]);
+        
+        state.corridorData = await corridorRes.json();
+        state.allSignsData = await signsRes.json();
+        
+        // Build corridor legend
+        buildCorridorLegend();
+    } catch (error) {
+        console.error('Failed to load god mode data:', error);
+    }
+}
+
+/**
+ * Build corridor legend in god mode panel
+ */
+function buildCorridorLegend() {
+    if (!state.corridorData) return;
+    
+    let html = '<h4>Corridors</h4>';
+    for (const [name, data] of Object.entries(state.corridorData)) {
+        html += `<div class="legend-item">
+            <span class="legend-color" style="background:${data.color}"></span>
+            ${name.replace('_', ' ')} (${data.count} cells)
+        </div>`;
+    }
+    corridorLegend.innerHTML = html;
+}
+
+/**
+ * Update predator presence info
+ */
+function updatePredatorInfo() {
+    if (!state.config?.predator_presence) return;
+    
+    let html = '<h4>Predator Presence</h4>';
+    for (const [species, present] of Object.entries(state.config.predator_presence)) {
+        if (species === 'wolf' || species === 'bear') {
+            const status = present ? '⚠️ PRESENT' : '✓ absent';
+            const cls = present ? 'present' : 'absent';
+            html += `<div class="predator-item ${cls}">${species}: ${status}</div>`;
+        }
+    }
+    predatorInfo.innerHTML = html;
+}
+
+/**
+ * Move player
  */
 async function movePlayer(dx, dy) {
     const newX = state.playerX + dx;
@@ -150,11 +217,26 @@ async function movePlayer(dx, dy) {
     state.playerX = newX;
     state.playerY = newY;
     
+    // Mark cells as revealed
+    const visRadius = state.config.visibility_radius;
+    for (let dy2 = -visRadius; dy2 <= visRadius; dy2++) {
+        for (let dx2 = -visRadius; dx2 <= visRadius; dx2++) {
+            if (dx2*dx2 + dy2*dy2 <= visRadius*visRadius) {
+                const ry = newY + dy2;
+                const rx = newX + dx2;
+                if (rx >= 0 && rx < state.config.grid_cols &&
+                    ry >= 0 && ry < state.config.grid_rows) {
+                    state.revealedCells.add(`${rx},${ry}`);
+                }
+            }
+        }
+    }
+    
     await updateView();
 }
 
 /**
- * Fetch terrain batch for visible area
+ * Fetch terrain batch
  */
 async function fetchTerrainBatch(minX, minY, maxX, maxY) {
     const url = `/api/terrain_batch?min_x=${minX}&min_y=${minY}&max_x=${maxX}&max_y=${maxY}`;
@@ -163,7 +245,7 @@ async function fetchTerrainBatch(minX, minY, maxX, maxY) {
 }
 
 /**
- * Fetch observations at current location
+ * Fetch observations
  */
 async function fetchObservations() {
     const url = `/api/observe/${state.playerX}/${state.playerY}`;
@@ -172,7 +254,7 @@ async function fetchObservations() {
 }
 
 /**
- * Update entire view (map + observations)
+ * Update entire view
  */
 async function updateView() {
     const minX = Math.max(0, state.playerX - VIEW_RADIUS);
@@ -185,30 +267,31 @@ async function updateView() {
         fetchObservations()
     ]);
     
+    state.lastTerrainData = terrainData;
     state.currentObservations = observations;
-    state.visibleSpeciesLocations = [];
     
-    renderMap(terrainData, observations);
-    renderLocationInfo(observations);
-    renderObservations(observations, null);
+    renderMap(terrainData);
+    renderObservations(observations);
 }
 
 /**
- * Render the map canvas with species symbols
+ * Render map with god mode overlays
  */
-function renderMap(terrainData, observations) {
+function renderMap(terrainData) {
+    if (!terrainData) return;
+    
     const { min_x, min_y, cells } = terrainData;
     const visRadius = state.config.visibility_radius;
     
+    // Clear
     ctx.fillStyle = '#1a1a2e';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
     
+    // Calculate offset
     const offsetX = canvas.width / 2 - (state.playerX - min_x) * CELL_SIZE - CELL_SIZE / 2;
     const offsetY = canvas.height / 2 - (state.playerY - min_y) * CELL_SIZE - CELL_SIZE / 2;
     
-    state.visibleSpeciesLocations = [];
-    
-    // Draw terrain cells
+    // Draw terrain
     for (let row = 0; row < cells.length; row++) {
         for (let col = 0; col < cells[row].length; col++) {
             const worldX = min_x + col;
@@ -221,10 +304,21 @@ function renderMap(terrainData, observations) {
             const screenX = offsetX + col * CELL_SIZE;
             const screenY = offsetY + row * CELL_SIZE;
             
-            if (dist <= visRadius) {
+            const isVisible = dist <= visRadius;
+            const isRevealed = state.revealedCells.has(`${worldX},${worldY}`);
+            const showAll = state.godMode && state.showAllTerrain;
+            
+            if (isVisible || isRevealed || showAll) {
                 const terrainId = cells[row][col];
                 const terrain = state.config.terrain_types[terrainId];
-                ctx.fillStyle = terrain ? terrain.color : '#888';
+                let color = terrain ? terrain.color : '#888';
+                
+                // Dim revealed but not visible cells
+                if (!isVisible && isRevealed && !showAll) {
+                    color = dimColor(color, 0.6);
+                }
+                
+                ctx.fillStyle = color;
             } else {
                 ctx.fillStyle = '#2a2a3e';
             }
@@ -233,117 +327,164 @@ function renderMap(terrainData, observations) {
         }
     }
     
-    // Draw species symbols
-    for (const sp of observations.observations) {
-        if (sp.locations) {
-            for (const loc of sp.locations) {
-                const dx = loc.x - state.playerX;
-                const dy = loc.y - state.playerY;
-                const dist = Math.sqrt(dx * dx + dy * dy);
+    // God mode: Draw corridors
+    if (state.godMode && state.showCorridors && state.corridorData) {
+        for (const [name, data] of Object.entries(state.corridorData)) {
+            ctx.fillStyle = data.color;
+            
+            for (const [cx, cy] of data.cells) {
+                const screenX = offsetX + (cx - min_x) * CELL_SIZE;
+                const screenY = offsetY + (cy - min_y) * CELL_SIZE;
                 
-                if (dist <= visRadius) {
-                    const screenX = offsetX + (loc.x - min_x) * CELL_SIZE;
-                    const screenY = offsetY + (loc.y - min_y) * CELL_SIZE;
-                    
-                    const symbol = SPECIES_SYMBOLS[sp.category] || '?';
-                    ctx.font = `${CELL_SIZE - 6}px serif`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(symbol, screenX + CELL_SIZE/2, screenY + CELL_SIZE/2);
-                    
-                    state.visibleSpeciesLocations.push({
-                        x: loc.x,
-                        y: loc.y,
-                        species: sp
-                    });
+                if (screenX >= -CELL_SIZE && screenX < canvas.width + CELL_SIZE &&
+                    screenY >= -CELL_SIZE && screenY < canvas.height + CELL_SIZE) {
+                    ctx.fillRect(screenX + 1, screenY + 1, CELL_SIZE - 3, CELL_SIZE - 3);
                 }
             }
         }
     }
     
+    // God mode: Draw all signs
+    if (state.godMode && state.showSigns && state.allSignsData) {
+        ctx.font = `${CELL_SIZE}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        for (const signType of state.allSignsData) {
+            ctx.fillStyle = signType.color;
+            
+            for (const loc of signType.locations) {
+                const screenX = offsetX + (loc.x - min_x) * CELL_SIZE + CELL_SIZE / 2;
+                const screenY = offsetY + (loc.y - min_y) * CELL_SIZE + CELL_SIZE / 2;
+                
+                if (screenX >= 0 && screenX < canvas.width &&
+                    screenY >= 0 && screenY < canvas.height) {
+                    ctx.fillText(signType.char, screenX, screenY);
+                }
+            }
+        }
+    }
+    
+    // Draw visible signs (non-god mode or overlay)
+    if (state.currentObservations?.signs) {
+        ctx.font = `${CELL_SIZE + 2}px monospace`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        for (const sign of state.currentObservations.signs) {
+            const screenX = offsetX + (sign.x - min_x) * CELL_SIZE + CELL_SIZE / 2;
+            const screenY = offsetY + (sign.y - min_y) * CELL_SIZE + CELL_SIZE / 2;
+            
+            ctx.fillStyle = sign.color;
+            ctx.fillText(sign.char, screenX, screenY);
+        }
+    }
+    
     // Draw player
-    const playerScreenX = canvas.width / 2 - CELL_SIZE / 2;
-    const playerScreenY = canvas.height / 2 - CELL_SIZE / 2;
+    const playerScreenX = canvas.width / 2;
+    const playerScreenY = canvas.height / 2;
     
     ctx.fillStyle = '#ef4444';
     ctx.beginPath();
-    ctx.arc(playerScreenX + CELL_SIZE / 2, playerScreenY + CELL_SIZE / 2, CELL_SIZE / 3, 0, Math.PI * 2);
+    ctx.arc(playerScreenX, playerScreenY, CELL_SIZE / 2 + 2, 0, Math.PI * 2);
     ctx.fill();
     
     // Draw visibility circle
     ctx.strokeStyle = 'rgba(255, 255, 255, 0.3)';
-    ctx.lineWidth = 2;
+    ctx.lineWidth = 1;
     ctx.beginPath();
-    ctx.arc(canvas.width / 2, canvas.height / 2, visRadius * CELL_SIZE, 0, Math.PI * 2);
+    ctx.arc(playerScreenX, playerScreenY, visRadius * CELL_SIZE, 0, Math.PI * 2);
     ctx.stroke();
 }
 
 /**
- * Render location info under map
+ * Dim a hex color
  */
-function renderLocationInfo(data) {
-    locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
-    terrainText.innerHTML = `<strong>${data.current_terrain.name.replace(/_/g, ' ')}</strong>: ${data.current_terrain.description}`;
+function dimColor(hex, factor) {
+    const r = parseInt(hex.slice(1, 3), 16);
+    const g = parseInt(hex.slice(3, 5), 16);
+    const b = parseInt(hex.slice(5, 7), 16);
     
-    terrainList.innerHTML = data.visible_terrains.map(t => `
-        <span class="terrain-badge" style="background-color: ${t.color}; color: ${getContrastColor(t.color)}">
-            ${t.name.replace(/_/g, ' ')}
-        </span>
-    `).join('');
+    const dr = Math.floor(r * factor);
+    const dg = Math.floor(g * factor);
+    const db = Math.floor(b * factor);
+    
+    return `#${dr.toString(16).padStart(2, '0')}${dg.toString(16).padStart(2, '0')}${db.toString(16).padStart(2, '0')}`;
 }
 
 /**
  * Render observations panel
  */
-function renderObservations(data, highlightId) {
-    if (!data || data.observations.length === 0) {
+function renderObservations(data) {
+    // Location
+    locationText.textContent = `Grid: [${data.location.x}, ${data.location.y}]`;
+    terrainText.innerHTML = `<strong>${data.current_terrain.name.replace(/_/g, ' ')}</strong>`;
+    
+    // Corridor info
+    if (data.corridors && data.corridors.length > 0) {
+        corridorText.innerHTML = `📍 In corridor: ${data.corridors.map(c => c.replace(/_/g, ' ')).join(', ')}`;
+        corridorText.classList.remove('hidden');
+    } else {
+        corridorText.classList.add('hidden');
+    }
+    
+    // Visible terrains
+    terrainList.innerHTML = data.visible_terrains.map(t => `
+        <span class="terrain-badge" style="background-color: ${t.color}; color: ${getContrastColor(t.color)}">
+            ${t.name.replace(/_/g, ' ')}
+        </span>
+    `).join('');
+    
+    // Signs
+    if (data.signs && data.signs.length > 0) {
+        const grouped = {};
+        for (const sign of data.signs) {
+            if (!grouped[sign.type]) {
+                grouped[sign.type] = {...sign, count: 0};
+            }
+            grouped[sign.type].count++;
+        }
+        
+        signsList.innerHTML = Object.values(grouped).map(s => `
+            <div class="sign-item">
+                <span class="sign-char" style="color: ${s.color}">${s.char}</span>
+                <span class="sign-desc">${s.description} (×${s.count})</span>
+            </div>
+        `).join('');
+    } else {
+        signsList.innerHTML = '<p class="placeholder">No tracks or signs visible...</p>';
+    }
+    
+    // Species observations
+    if (data.observations.length === 0) {
         observationsList.innerHTML = '<p class="placeholder">No notable species observed here. Keep exploring...</p>';
         return;
     }
     
-    let speciesToShow = data.observations;
-    
-    if (highlightId !== null) {
-        speciesToShow = data.observations.filter(sp => sp.id === highlightId);
-    } else {
-        speciesToShow = data.observations.slice(0, 3);
-    }
-    
-    if (speciesToShow.length === 0) {
-        observationsList.innerHTML = '<p class="placeholder">Hover over species symbols on map to observe...</p>';
-        return;
-    }
-    
-    observationsList.innerHTML = speciesToShow.map(sp => `
-        <div class="species-card ${highlightId === sp.id ? 'highlighted' : ''}">
+    observationsList.innerHTML = data.observations.map(sp => `
+        <div class="species-card">
             <div class="species-header">
-                <span class="species-symbol">${SPECIES_SYMBOLS[sp.category] || '?'}</span>
                 <h3>${sp.common_name}</h3>
                 <span class="latin-name">${sp.latin_name}</span>
                 <span class="category-badge ${sp.category}">${sp.category.replace(/_/g, ' ')}</span>
+                ${sp.state > 1 ? `<span class="state-badge">state: ${sp.state}</span>` : ''}
             </div>
-            ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo" onerror="this.style.display='none'">` : ''}
+            ${sp.photo_url ? `<img src="${sp.photo_url}" alt="${sp.common_name}" class="species-photo">` : ''}
             <div class="species-details">
-                <p><strong>Visual:</strong> ${sp.visual}</p>
-                <p><strong>Touch:</strong> ${sp.tactile}</p>
-                <p><strong>Smell:</strong> ${sp.smell}</p>
-                <p><strong>Sound:</strong> ${sp.sound}</p>
-                <p><strong>Habitat:</strong> ${sp.habitat}</p>
-                <p><strong>Season:</strong> ${sp.season_note}</p>
-                <p><strong>Uses:</strong> ${sp.uses}</p>
+                <p><strong>👁 Visual:</strong> ${sp.visual || ''}</p>
+                <p><strong>✋ Touch:</strong> ${sp.tactile || ''}</p>
+                <p><strong>👃 Smell:</strong> ${sp.smell || ''}</p>
+                <p><strong>👂 Sound:</strong> ${sp.sound || ''}</p>
+                <p><strong>🏠 Habitat:</strong> ${sp.habitat || ''}</p>
+                <p><strong>🌸 Season:</strong> ${sp.season_note || ''}</p>
+                <p><strong>🔧 Uses:</strong> ${sp.uses || ''}</p>
             </div>
         </div>
     `).join('');
-    
-    if (highlightId === null && data.observations.length > 3) {
-        observationsList.innerHTML += `
-            <p class="more-species">+ ${data.observations.length - 3} more species nearby. Hover on map to explore.</p>
-        `;
-    }
 }
 
 /**
- * Get contrasting text color for background
+ * Get contrasting text color
  */
 function getContrastColor(hexcolor) {
     const r = parseInt(hexcolor.slice(1, 3), 16);
@@ -353,5 +494,5 @@ function getContrastColor(hexcolor) {
     return luminance > 0.5 ? '#000000' : '#ffffff';
 }
 
-// Start the game
+// Start
 init();

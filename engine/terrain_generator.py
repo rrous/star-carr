@@ -1,145 +1,224 @@
 """
-Terrain Generator - Parses terrain_init.yaml and generates terrain array
+Terrain Generator - Parses terrain_init.yaml → numpy arrays + corridors
 """
 
 import numpy as np
-import yaml
-from pathlib import Path
+from scipy.ndimage import distance_transform_edt, binary_dilation
+import heapq
+from typing import Dict, Tuple, List
 
 
-def load_terrain_rules(rules_path: str = "rules/terrain_init.yaml") -> dict:
-    """Load terrain rules from YAML file."""
-    with open(rules_path, 'r') as f:
-        return yaml.safe_load(f)
-
-
-def point_in_ellipse(x: int, y: int, center: list, radius: list) -> bool:
-    """Check if point is inside ellipse."""
-    dx = (x - center[0]) / radius[0]
-    dy = (y - center[1]) / radius[1]
-    return (dx * dx + dy * dy) <= 1.0
-
-
-def point_in_rect(x: int, y: int, bounds: list) -> bool:
-    """Check if point is inside rectangle. bounds = [x1, y1, x2, y2]"""
-    return bounds[0] <= x <= bounds[2] and bounds[1] <= y <= bounds[3]
-
-
-def point_in_polygon(x: int, y: int, points: list) -> bool:
-    """Check if point is inside polygon using ray casting."""
-    n = len(points)
-    inside = False
-    j = n - 1
-    for i in range(n):
-        xi, yi = points[i]
-        xj, yj = points[j]
-        if ((yi > y) != (yj > y)) and (x < (xj - xi) * (y - yi) / (yj - yi) + xi):
-            inside = not inside
-        j = i
-    return inside
-
-
-def generate_terrain(rules: dict) -> tuple[np.ndarray, dict]:
-    """
-    Generate terrain array from rules.
-    Returns (terrain_array, terrain_types_dict)
-    """
-    grid = rules['grid']
-    cols, rows = grid['cols'], grid['rows']
-    
-    # Build terrain name -> id mapping
-    terrain_types = rules['terrain_types']
-    name_to_id = {name: info['id'] for name, info in terrain_types.items()}
-    
-    # Get default terrain
-    default_terrain = rules['defaults']['terrain']
-    default_id = name_to_id[default_terrain]
-    
-    # Initialize array with default
-    terrain = np.full((rows, cols), default_id, dtype=np.uint8)
-    
-    # Process zones in order (later overwrites earlier)
-    for zone in rules['zones']:
-        terrain_name = zone['terrain']
-        terrain_id = name_to_id[terrain_name]
-        shape = zone['shape']
+class TerrainGenerator:
+    def __init__(self, rules: dict):
+        self.rules = rules
+        self.grid = rules['grid']
+        self.cols = self.grid['cols']
+        self.rows = self.grid['rows']
         
-        if shape == 'ellipse':
-            center = zone['center']
-            radius = zone['radius']
-            # Calculate bounding box for efficiency
-            min_x = max(0, int(center[0] - radius[0] - 1))
-            max_x = min(cols, int(center[0] + radius[0] + 2))
-            min_y = max(0, int(center[1] - radius[1] - 1))
-            max_y = min(rows, int(center[1] + radius[1] + 2))
-            
-            for y in range(min_y, max_y):
-                for x in range(min_x, max_x):
-                    if point_in_ellipse(x, y, center, radius):
-                        terrain[y, x] = terrain_id
-                        
-        elif shape == 'rect':
-            bounds = zone['bounds']
-            x1 = max(0, bounds[0])
-            y1 = max(0, bounds[1])
-            x2 = min(cols, bounds[2] + 1)
-            y2 = min(rows, bounds[3] + 1)
-            terrain[y1:y2, x1:x2] = terrain_id
-            
-        elif shape == 'polygon':
-            points = zone['points']
-            # Calculate bounding box
-            xs = [p[0] for p in points]
-            ys = [p[1] for p in points]
-            min_x = max(0, min(xs))
-            max_x = min(cols, max(xs) + 1)
-            min_y = max(0, min(ys))
-            max_y = min(rows, max(ys) + 1)
-            
-            for y in range(min_y, max_y):
-                for x in range(min_x, max_x):
-                    if point_in_polygon(x, y, points):
-                        terrain[y, x] = terrain_id
+        # Build terrain name→id lookup
+        self.terrain_ids = {v['name']: int(k) for k, v in rules['terrain_types'].items()}
+        self.terrain_types = {int(k): v for k, v in rules['terrain_types'].items()}
     
-    return terrain, terrain_types
-
-
-def get_terrain_config(rules: dict) -> dict:
-    """Extract configuration for API responses."""
-    grid = rules['grid']
-    spawn = rules['spawn']
-    terrain_types = rules['terrain_types']
+    def generate(self, seed: int = None) -> Tuple[np.ndarray, Dict[str, np.ndarray]]:
+        """Generate terrain array and corridor masks."""
+        if seed is not None:
+            np.random.seed(seed)
+        
+        terrain = self._generate_terrain()
+        corridors = self._generate_corridors(terrain)
+        
+        return terrain, corridors
     
-    # Convert terrain_types to API format (id as key)
-    types_by_id = {}
-    for name, info in terrain_types.items():
-        types_by_id[info['id']] = {
-            'name': name,
-            'color': info['color'],
-            'description': info['description']
+    def _generate_terrain(self) -> np.ndarray:
+        terrain = np.zeros((self.rows, self.cols), dtype=np.uint8)
+        lake = self.rules['lake']
+        
+        cx, cy = lake['center_x'], lake['center_y']
+        rx, ry = lake['radius_x'], lake['radius_y']
+        noise_min, noise_max = lake['noise_range']
+        
+        for y in range(self.rows):
+            for x in range(self.cols):
+                dx = (x - cx) / rx
+                dy = (y - cy) / ry
+                dist = np.sqrt(dx*dx + dy*dy) + np.random.uniform(noise_min, noise_max)
+                
+                # Find zone
+                assigned = False
+                for zone in lake['zones']:
+                    if dist < zone['max_dist']:
+                        t = zone['terrain']
+                        if isinstance(t, list):
+                            weights = zone.get('weights', [1/len(t)]*len(t))
+                            t = np.random.choice(t, p=weights)
+                        terrain[y, x] = self.terrain_ids[t]
+                        assigned = True
+                        break
+                
+                if not assigned:
+                    default = self.rules['default_terrain']
+                    t = np.random.choice(default['options'], p=default['weights'])
+                    terrain[y, x] = self.terrain_ids[t]
+        
+        # Platform
+        spawn = self.rules['spawn']
+        platform_id = self.terrain_ids['platform']
+        for dy in [-1, 0, 1]:
+            for dx in [-1, 0, 1]:
+                py, px = spawn['y'] + dy, spawn['x'] + dx
+                if 0 <= py < self.rows and 0 <= px < self.cols:
+                    terrain[py, px] = platform_id
+        
+        # Grassland patches
+        patches = self.rules.get('grassland_patches', {})
+        grass_id = self.terrain_ids['grassland']
+        water_ids = [self.terrain_ids['deep_water'], self.terrain_ids['shallow_water']]
+        
+        for _ in range(patches.get('count', 0)):
+            region = patches['region']
+            pcx = np.random.randint(region['x'][0], region['x'][1])
+            pcy = np.random.randint(region['y'][0], region['y'][1])
+            r = np.random.randint(patches['radius'][0], patches['radius'][1])
+            
+            for y in range(max(0, pcy-r), min(self.rows, pcy+r)):
+                for x in range(max(0, pcx-r), min(self.cols, pcx+r)):
+                    if (x-pcx)**2 + (y-pcy)**2 < r*r:
+                        if terrain[y, x] not in water_ids + [platform_id]:
+                            terrain[y, x] = grass_id
+        
+        return terrain
+    
+    def _generate_corridors(self, terrain: np.ndarray) -> Dict[str, np.ndarray]:
+        corridors = {}
+        corridor_rules = self.rules.get('corridors', {})
+        
+        if 'water_edge' in corridor_rules:
+            corridors['water_edge'] = self._gen_water_edge(terrain, corridor_rules['water_edge'])
+        
+        if 'ecotone' in corridor_rules:
+            corridors['ecotone'] = self._gen_ecotone(terrain, corridor_rules['ecotone'])
+        
+        if 'game_trail' in corridor_rules:
+            corridors['game_trail'] = self._gen_game_trails(terrain, corridor_rules['game_trail'])
+        
+        return corridors
+    
+    def _gen_water_edge(self, terrain: np.ndarray, cfg: dict) -> np.ndarray:
+        width = cfg.get('width', 3)
+        water_ids = [self.terrain_ids[t] for t in cfg.get('source_terrain', ['deep_water', 'shallow_water'])]
+        water_mask = np.isin(terrain, water_ids)
+        
+        if not water_mask.any():
+            return np.zeros_like(terrain, dtype=bool)
+        
+        dist = distance_transform_edt(~water_mask)
+        return (dist > 0) & (dist <= width)
+    
+    def _gen_ecotone(self, terrain: np.ndarray, cfg: dict) -> np.ndarray:
+        width = cfg.get('width', 2)
+        ecotone = np.zeros((self.rows, self.cols), dtype=bool)
+        
+        for y in range(self.rows):
+            for x in range(self.cols):
+                center = terrain[y, x]
+                for dy, dx in [(-1,0), (1,0), (0,-1), (0,1)]:
+                    ny, nx = y + dy, x + dx
+                    if 0 <= ny < self.rows and 0 <= nx < self.cols:
+                        if terrain[ny, nx] != center:
+                            ecotone[y, x] = True
+                            break
+        
+        if width > 1:
+            struct = np.ones((width*2+1, width*2+1), dtype=bool)
+            ecotone = binary_dilation(ecotone, structure=struct)
+        
+        return ecotone
+    
+    def _gen_game_trails(self, terrain: np.ndarray, cfg: dict) -> np.ndarray:
+        trail_mask = np.zeros((self.rows, self.cols), dtype=bool)
+        
+        from_ids = [self.terrain_ids[t] for t in cfg['endpoints']['from']]
+        to_ids = [self.terrain_ids[t] for t in cfg['endpoints']['to']]
+        
+        from_mask = np.isin(terrain, from_ids)
+        to_mask = np.isin(terrain, to_ids)
+        
+        if not from_mask.any() or not to_mask.any():
+            return trail_mask
+        
+        from_pts = np.argwhere(from_mask)
+        to_pts = np.argwhere(to_mask)
+        
+        cost_map = self._build_cost_map(terrain)
+        count = cfg.get('count', 5)
+        
+        if len(from_pts) > count * 2:
+            indices = np.random.choice(len(from_pts), count * 2, replace=False)
+            from_pts = from_pts[indices]
+        
+        trails = 0
+        for start in from_pts:
+            if trails >= count:
+                break
+            
+            dists = [np.sqrt((start[0]-ep[0])**2 + (start[1]-ep[1])**2) for ep in to_pts]
+            end = to_pts[np.argmin(dists)]
+            
+            path = self._astar(tuple(start), tuple(end), cost_map)
+            if path:
+                for y, x in path:
+                    trail_mask[y, x] = True
+                trails += 1
+        
+        return trail_mask
+    
+    def _build_cost_map(self, terrain: np.ndarray) -> np.ndarray:
+        cost = np.ones_like(terrain, dtype=np.float32)
+        
+        costs = {
+            'deep_water': 100, 'shallow_water': 5, 'reed_bed': 2, 'wetland': 3,
+            'carr_woodland': 1, 'birch_woodland': 1, 'mixed_woodland': 1,
+            'grassland': 2, 'platform': 50
         }
+        
+        for name, c in costs.items():
+            if name in self.terrain_ids:
+                cost[terrain == self.terrain_ids[name]] = c
+        
+        return cost
     
-    return {
-        'grid_cols': grid['cols'],
-        'grid_rows': grid['rows'],
-        'cell_size_m': grid['cell_size_m'],
-        'origin_e': grid['origin_easting'],
-        'origin_n': grid['origin_northing'],
-        'spawn_x': spawn['x'],
-        'spawn_y': spawn['y'],
-        'terrain_types': types_by_id
-    }
-
-
-if __name__ == "__main__":
-    # Test generation
-    rules = load_terrain_rules()
-    terrain, types = generate_terrain(rules)
-    print(f"Generated terrain: {terrain.shape}")
-    
-    # Print distribution
-    unique, counts = np.unique(terrain, return_counts=True)
-    print("\nTerrain distribution:")
-    for t, c in zip(unique, counts):
-        pct = 100 * c / terrain.size
-        print(f"  {t}: {c:,} cells ({pct:.1f}%)")
+    def _astar(self, start: Tuple, end: Tuple, cost_map: np.ndarray) -> List[Tuple]:
+        def h(a, b):
+            return np.sqrt((a[0]-b[0])**2 + (a[1]-b[1])**2)
+        
+        open_set = [(h(start, end), 0, start)]
+        came_from = {}
+        g_score = {start: 0}
+        counter = 0
+        
+        while open_set:
+            _, _, current = heapq.heappop(open_set)
+            
+            if current == end:
+                path = [current]
+                while current in came_from:
+                    current = came_from[current]
+                    path.append(current)
+                return path[::-1]
+            
+            for dy, dx in [(-1,0), (1,0), (0,-1), (0,1), (-1,-1), (-1,1), (1,-1), (1,1)]:
+                ny, nx = current[0] + dy, current[1] + dx
+                if not (0 <= ny < self.rows and 0 <= nx < self.cols):
+                    continue
+                
+                neighbor = (ny, nx)
+                move_cost = 1.414 if (dy != 0 and dx != 0) else 1.0
+                tentative_g = g_score[current] + cost_map[ny, nx] * move_cost
+                
+                if neighbor not in g_score or tentative_g < g_score[neighbor]:
+                    came_from[neighbor] = current
+                    g_score[neighbor] = tentative_g
+                    counter += 1
+                    heapq.heappush(open_set, (tentative_g + h(neighbor, end), counter, neighbor))
+        
+        return []

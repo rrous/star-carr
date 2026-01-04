@@ -11,30 +11,74 @@
         <header>
             <h1>MESOLITHIC SCHOLAR</h1>
             <p class="subtitle">Star Carr, Yorkshire — Spring, 9000 BCE</p>
+            
+            <div class="header-controls">
+                <div class="time-control">
+                    <label>Time:</label>
+                    <select id="time-select">
+                        <option value="dawn">Dawn</option>
+                        <option value="morning">Morning</option>
+                        <option value="midday" selected>Midday</option>
+                        <option value="afternoon">Afternoon</option>
+                        <option value="dusk">Dusk</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
+                
+                <div class="god-mode-toggle">
+                    <label>
+                        <input type="checkbox" id="god-mode-checkbox">
+                        Demo Mode
+                    </label>
+                </div>
+            </div>
         </header>
         
         <main>
             <div class="map-section">
-                <canvas id="map-canvas" width="500" height="500"></canvas>
-                
-                <div class="location-info">
-                    <p id="location-text">Loading...</p>
-                    <p id="terrain-text"></p>
-                </div>
-                
-                <div class="terrain-visible">
-                    <div id="terrain-list"></div>
-                </div>
-                
+                <canvas id="map-canvas" width="400" height="500"></canvas>
                 <div class="controls">
-                    <p>Arrow keys / WASD to move | Click map to walk | Hover for details</p>
+                    <p>Arrow keys or WASD to move</p>
+                    <p>Click on map to walk</p>
+                </div>
+                
+                <div id="god-mode-panel" class="god-mode-panel hidden">
+                    <h3>Demo Mode</h3>
+                    <div class="god-controls">
+                        <label><input type="checkbox" id="show-corridors" checked> Corridors</label>
+                        <label><input type="checkbox" id="show-signs" checked> Signs</label>
+                        <label><input type="checkbox" id="show-all-terrain"> Full Map</label>
+                    </div>
+                    <div class="corridor-legend" id="corridor-legend"></div>
+                    <div class="predator-info" id="predator-info"></div>
                 </div>
             </div>
             
             <div class="observation-panel">
-                <h2>Observations</h2>
-                <div id="observations-list">
-                    <p class="placeholder">Move around to observe flora and fauna...</p>
+                <div class="location-info">
+                    <h2>Location</h2>
+                    <p id="location-text">Loading...</p>
+                    <p id="terrain-text"></p>
+                    <p id="corridor-text" class="corridor-info"></p>
+                </div>
+                
+                <div class="terrain-visible">
+                    <h2>Visible Terrain</h2>
+                    <div id="terrain-list"></div>
+                </div>
+                
+                <div class="signs-section">
+                    <h2>Signs & Tracks</h2>
+                    <div id="signs-list">
+                        <p class="placeholder">No tracks or signs visible...</p>
+                    </div>
+                </div>
+                
+                <div class="observations">
+                    <h2>Observations</h2>
+                    <div id="observations-list">
+                        <p class="placeholder">Move around to observe flora and fauna...</p>
+                    </div>
                 </div>
             </div>
         </main>

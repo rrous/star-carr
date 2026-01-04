@@ -1,0 +1,470 @@
+# Star Carr Species Configuration
+
+settings:
+  density: 0.05
+  season: spring
+  default_photo: "/assets/species/placeholder.png"
+
+abundance_weights:
+  abundant: 8
+  very_common: 4
+  common: 3
+  occasional: 2
+  rare: 1
+  very_rare: 0.2
+
+species:
+  # TREES
+  birch:
+    id: 1
+    latin: Betula spp.
+    category: tree
+    abundance: very_common
+    terrains: [birch_woodland, mixed_woodland, grassland]
+    photo: "/assets/species/birch.jpg"
+    observations:
+      visual: "Slender trees with distinctive white papery bark marked by dark horizontal lines. Delicate branches carry small triangular leaves with serrated edges, now bright green in spring growth."
+      tactile: "Bark peels in thin papery layers, smooth and cool to touch. Twigs are thin and flexible."
+      smell: "Fresh, slightly sweet scent from new leaves. Bark has faint wintergreen aroma when scratched."
+      sound: "Leaves rustle softly in breeze. Small birds frequent the branches."
+      habitat: "Dominant in drier woodland areas, pioneer species colonizing open ground."
+      season: "Spring catkins releasing pollen. Sap rising - can be tapped for sweet drink."
+      uses: "Bark for containers, tar production, tinder. Wood for tools, firewood. Sap drinkable."
+
+  willow:
+    id: 2
+    latin: Salix spp.
+    category: tree
+    abundance: common
+    terrains: [wetland, carr_woodland]
+    photo: "/assets/species/willow.jpg"
+    observations:
+      visual: "Graceful trees with long, narrow silver-green leaves. Flexible branches hang toward water."
+      tactile: "Bark is rough and deeply furrowed on old trees. Young shoots remarkably flexible."
+      smell: "Crushed leaves release fresh, slightly bitter green scent."
+      sound: "Branches creak and sway. Favored by warblers whose song fills the carr."
+      habitat: "Edges of water, wet ground, carr woodland."
+      season: "Fuzzy catkins appearing. New shoots sprouting vigorously."
+      uses: "Flexible stems for basketry, fish traps, shelter frames. Bark contains pain-relieving compounds."
+
+  alder:
+    id: 3
+    latin: Alnus glutinosa
+    category: tree
+    abundance: common
+    terrains: [wetland, carr_woodland]
+    photo: "/assets/species/alder.jpg"
+    observations:
+      visual: "Medium tree with dark fissured bark. Rounded leaves with notched tips."
+      tactile: "Bark rough and corky. Cut wood turns from white to orange-red when exposed to air."
+      smell: "Damp, earthy scent. Crushed leaves slightly sticky."
+      sound: "Home to many birds. Woodpeckers often drum on trunks."
+      habitat: "Waterlogged ground, stream banks, carr woodland."
+      season: "Purple-red catkins extending. Last year's cones still releasing seeds."
+      uses: "Wood resists rot underwater - ideal for platforms, posts."
+
+  aspen:
+    id: 4
+    latin: Populus tremula
+    category: tree
+    abundance: occasional
+    terrains: [birch_woodland, mixed_woodland, grassland]
+    photo: "/assets/species/aspen.jpg"
+    observations:
+      visual: "Tall straight trunk with smooth pale gray-green bark. Round leaves on flattened stalks."
+      tactile: "Bark smooth on young trees, becoming rough with age."
+      smell: "Mild, clean scent. Buds are resinous and fragrant."
+      sound: "Distinctive constant rustling even in lightest breeze - 'trembling' leaves."
+      habitat: "Woodland edges, clearings, colonizes disturbed ground quickly."
+      season: "Fuzzy catkins before leaves emerge. Suckers sprouting from roots."
+      uses: "Light soft wood for carving, paddles. Inner bark edible in emergency."
+
+  # SHRUBS & PLANTS
+  hazel:
+    id: 5
+    latin: Corylus avellana
+    category: shrub
+    abundance: common
+    terrains: [birch_woodland, mixed_woodland]
+    photo: "/assets/species/hazel.jpg"
+    observations:
+      visual: "Multi-stemmed shrub or small tree. Broad, soft leaves with pointed tips."
+      tactile: "Leaves softly hairy. Young stems smooth and flexible."
+      smell: "Fresh green leafy scent. Catkin pollen has dusty smell."
+      sound: "Nuthatches and jays frequent for nuts. Dormice rustle in branches."
+      habitat: "Woodland understory, edges, hedgerows."
+      season: "Long yellow catkins releasing pollen. Tiny red female flowers visible."
+      uses: "Nuts highly nutritious (autumn). Straight rods for tools, traps, shelter frames."
+
+  reeds:
+    id: 6
+    latin: Phragmites australis
+    category: plant
+    abundance: abundant
+    terrains: [reed_bed]
+    photo: "/assets/species/reeds.jpg"
+    observations:
+      visual: "Tall grass-like stems reaching 2-3 meters. Dead tan stems mixed with fresh green shoots."
+      tactile: "Stems hollow and rigid. Leaves have sharp edges that can cut skin."
+      smell: "Fresh green smell mixed with slight decay from old stems."
+      sound: "Dry stems rattle and creak in wind. Reed beds alive with bird calls."
+      habitat: "Shallow water margins, forming dense beds at lake edges."
+      season: "New green shoots pushing through old stems. Reed warblers returning."
+      uses: "Stems for thatching, matting, arrow shafts. Roots edible."
+
+  nettles:
+    id: 7
+    latin: Urtica dioica
+    category: plant
+    abundance: common
+    terrains: [grassland, platform]
+    photo: "/assets/species/nettles.jpg"
+    observations:
+      visual: "Dark green plants with heart-shaped serrated leaves covered in fine hairs."
+      tactile: "WARNING: Stinging hairs cause painful burning rash on contact."
+      smell: "Pungent, green, slightly unpleasant when crushed."
+      sound: "Buzzing of insects - many pollinators visit the flowers."
+      habitat: "Disturbed ground, indicates occupation sites."
+      season: "Young spring shoots are most tender for eating and fiber extraction."
+      uses: "Young leaves edible when cooked. Stem fibers make strong cordage."
+
+  sedge:
+    id: 8
+    latin: Carex spp.
+    category: plant
+    abundance: abundant
+    terrains: [reed_bed, wetland, carr_woodland]
+    photo: "/assets/species/sedge.jpg"
+    observations:
+      visual: "Grass-like plants growing in dense tussocks. Triangular stems."
+      tactile: "Stems triangular in cross-section ('sedges have edges')."
+      smell: "Clean, slightly sweet grass-like scent."
+      sound: "Soft rustling. Many small birds shelter and nest in tussocks."
+      habitat: "Wet ground, marshes, stream banks."
+      season: "Fresh growth emerging from tussock centers."
+      uses: "Leaves for weaving, cordage, thatching."
+
+  water_lily:
+    id: 9
+    latin: Nymphaea alba
+    category: plant
+    abundance: occasional
+    terrains: [shallow_water]
+    photo: "/assets/species/water_lily.jpg"
+    observations:
+      visual: "Large round floating leaves. White flowers with yellow centers."
+      tactile: "Leaves waxy on top, slimy below. Roots thick and starchy."
+      smell: "Flowers sweetly fragrant."
+      sound: "Silent. Frogs often sit on pads."
+      habitat: "Still or slow water, 1-2m deep."
+      season: "Leaves unfurling on surface. Flower buds forming."
+      uses: "Roots edible when cooked. Seeds can be ground."
+
+  # LARGE HERBIVORES
+  red_deer:
+    id: 10
+    latin: Cervus elaphus
+    category: large_herbivore
+    abundance: common
+    terrains: [birch_woodland, mixed_woodland, grassland]
+    photo: "/assets/species/red_deer.jpg"
+    observations:
+      visual: "Large deer with rich reddish-brown coat. Stags carry impressive antlers."
+      tactile: "Tracks: Large cloven hoofprints, ~8cm long."
+      smell: "Musky scent, especially near wallows."
+      sound: "Barking alarm call. Calves bleat."
+      habitat: "Woodland edges, clearings, browse in forest."
+      season: "Hinds heavily pregnant or with newborn calves."
+      uses: "PRIMARY PREY: ~80kg meat. Antler for tools, hide for clothing."
+
+  elk:
+    id: 11
+    latin: Alces alces
+    category: large_herbivore
+    abundance: occasional
+    terrains: [reed_bed, wetland, carr_woodland]
+    photo: "/assets/species/elk.jpg"
+    observations:
+      visual: "MASSIVE deer, dark brown-black, humped shoulders, long legs."
+      tactile: "Tracks: Very large cloven prints ~15cm."
+      smell: "Strong musky odor near feeding areas."
+      sound: "Usually silent. Occasional low grunt."
+      habitat: "Wetlands, lake margins, feeds on aquatic plants."
+      season: "Cows with young calves, very protective."
+      uses: "Enormous meat yield ~200kg. Hide extremely thick."
+
+  roe_deer:
+    id: 12
+    latin: Capreolus capreolus
+    category: large_herbivore
+    abundance: common
+    terrains: [birch_woodland, mixed_woodland]
+    photo: "/assets/species/roe_deer.jpg"
+    observations:
+      visual: "Small elegant deer, reddish summer coat. White rump patch."
+      tactile: "Tracks: Small neat cloven prints ~4cm."
+      smell: "Bucks mark territory with scent glands."
+      sound: "Sharp barking alarm call, often repeated."
+      habitat: "Dense woodland with understory. Secretive."
+      season: "Does pregnant, will give birth in late spring."
+      uses: "Smaller meat yield ~12kg but tender. Hide soft."
+
+  aurochs:
+    id: 13
+    latin: Bos primigenius
+    category: large_herbivore
+    abundance: rare
+    terrains: [grassland, wetland]
+    photo: "/assets/species/aurochs.jpg"
+    observations:
+      visual: "ENORMOUS wild cattle, 1.8m at shoulder. Long forward-curving horns."
+      tactile: "Tracks: Massive round hoofprints ~12cm."
+      smell: "Strong cattle smell. Bulls particularly pungent."
+      sound: "Deep bellowing. Ground trembles when herd runs."
+      habitat: "Open grassland, woodland clearings."
+      season: "Calving season. Bulls aggressive. DANGEROUS."
+      uses: "Massive meat yield ~350kg but VERY DANGEROUS to hunt."
+
+  wild_boar:
+    id: 14
+    latin: Sus scrofa
+    category: large_herbivore
+    abundance: occasional
+    terrains: [carr_woodland, birch_woodland, mixed_woodland]
+    photo: "/assets/species/wild_boar.jpg"
+    observations:
+      visual: "Stocky pig with coarse dark bristly coat. Males have curved tusks."
+      tactile: "Tracks: Cloven hooves with dew claw marks ~6cm."
+      smell: "Strong pungent pig smell."
+      sound: "Grunting while feeding. Piglets squeal."
+      habitat: "Woodland with undergrowth. Wetland edges."
+      season: "Sows with litters of striped piglets."
+      uses: "Good meat yield ~40kg. DANGEROUS when cornered."
+
+  # MEDIUM HERBIVORES
+  beaver:
+    id: 15
+    latin: Castor fiber
+    category: medium_herbivore
+    abundance: occasional
+    terrains: [shallow_water, reed_bed, carr_woodland]
+    photo: "/assets/species/beaver.jpg"
+    observations:
+      visual: "Large rodent with dense brown fur, broad flat scaly tail."
+      tactile: "Signs: Distinctive tooth marks on felled trees."
+      smell: "Castoreum scent marks near water - musky, strong."
+      sound: "Loud tail slap on water as alarm."
+      habitat: "Rivers, lake edges, ponds."
+      season: "Kits born in lodge. Adults repairing winter damage."
+      uses: "Highly valued fur. Castoreum for medicine."
+
+  hare:
+    id: 16
+    latin: Lepus europaeus
+    category: medium_herbivore
+    abundance: occasional
+    terrains: [grassland, birch_woodland]
+    photo: "/assets/species/hare.jpg"
+    observations:
+      visual: "Large rabbit-like animal with very long black-tipped ears."
+      tactile: "Tracks: Large hind prints ahead of small fore prints."
+      smell: "Faint grassy scent."
+      sound: "Usually silent. Screams when caught."
+      habitat: "Open ground, field edges, woodland clearings."
+      season: "March madness - boxing matches between males."
+      uses: "Meat lean but good. Fur for clothing trim."
+
+  # PREDATORS
+  wolf:
+    id: 20
+    latin: Canis lupus
+    category: predator
+    abundance: rare
+    terrains: [birch_woodland, mixed_woodland, grassland]
+    photo: "/assets/species/wolf.jpg"
+    observations:
+      visual: "Large dog-like predator, grey-brown fur, bushy tail."
+      tactile: "Tracks: Large dog prints ~10cm, elongated."
+      smell: "Musky canine scent at marking posts."
+      sound: "Iconic howling, especially at dusk/dawn."
+      habitat: "Wide-ranging across all terrain following prey."
+      season: "Denning season - pups born."
+      uses: "Fur warm. Competitor for deer. Potential THREAT."
+
+  brown_bear:
+    id: 21
+    latin: Ursus arctos
+    category: predator
+    abundance: very_rare
+    terrains: [birch_woodland, mixed_woodland]
+    photo: "/assets/species/brown_bear.jpg"
+    observations:
+      visual: "Massive predator, brown fur. Distinctive shoulder hump."
+      tactile: "Tracks: Huge prints showing five toes and claws, ~25cm."
+      smell: "Strong musky bear odor."
+      sound: "Usually silent. Woofing alarm."
+      habitat: "Woodland, forest edges. Needs large territory."
+      season: "MOST DANGEROUS NOW - emerging from hibernation, hungry."
+      uses: "Fur prized. EXTREMELY DANGEROUS - avoid."
+
+  fox:
+    id: 22
+    latin: Vulpes vulpes
+    category: predator
+    abundance: occasional
+    terrains: [grassland, birch_woodland, mixed_woodland]
+    photo: "/assets/species/fox.jpg"
+    observations:
+      visual: "Medium predator with red-orange fur, white chest, bushy tail."
+      tactile: "Tracks: Small dog-like prints ~5cm, in neat line."
+      smell: "Strong musky scent, especially near dens."
+      sound: "Barking screams at night."
+      habitat: "Woodland margins, hedgerows. Adaptable."
+      season: "Cubs born in den."
+      uses: "Fur valued for warmth."
+
+  lynx:
+    id: 23
+    latin: Lynx lynx
+    category: predator
+    abundance: very_rare
+    terrains: [mixed_woodland, birch_woodland]
+    photo: "/assets/species/lynx.jpg"
+    observations:
+      visual: "Medium cat with spotted fur, short tail, distinctive ear tufts."
+      tactile: "Tracks: Round cat prints ~7cm, no claw marks."
+      smell: "Faint cat musk at marking spots."
+      sound: "Usually silent. Eerie wailing during mating."
+      habitat: "Dense forest with good cover. Very secretive."
+      season: "Solitary except mating."
+      uses: "Fur extremely valuable. No threat to adult humans."
+
+  # AQUATIC
+  pike:
+    id: 30
+    latin: Esox lucius
+    category: aquatic
+    abundance: common
+    terrains: [shallow_water, reed_bed]
+    photo: "/assets/species/pike.jpg"
+    observations:
+      visual: "Large predatory fish with green-gold mottling. Sharp teeth."
+      tactile: "Slimy scales. Teeth will cut fingers!"
+      smell: "Fresh fish smell."
+      sound: "Splash when striking prey."
+      habitat: "Lakes, slow rivers. Ambush predator."
+      season: "Post-spawning, hungry and active."
+      uses: "Good eating ~2-5kg. Y-bones require careful preparation."
+
+  waterfowl:
+    id: 31
+    latin: Anas/Anser spp.
+    category: aquatic
+    abundance: abundant
+    terrains: [shallow_water, reed_bed, wetland]
+    photo: "/assets/species/waterfowl.jpg"
+    observations:
+      visual: "Various ducks and geese. Mallards common."
+      tactile: "Webbed footprints in mud. Nests lined with down."
+      smell: "Slight musty bird smell."
+      sound: "Quacking ducks, honking geese."
+      habitat: "Lake surface, reed beds, grassy banks."
+      season: "NESTING NOW - eggs available."
+      uses: "Meat, eggs, feathers, down."
+
+  perch:
+    id: 32
+    latin: Perca fluviatilis
+    category: aquatic
+    abundance: common
+    terrains: [shallow_water, deep_water]
+    photo: "/assets/species/perch.jpg"
+    observations:
+      visual: "Medium fish with dark vertical stripes. Spiny dorsal fin."
+      tactile: "Rough scales. Sharp spines - handle carefully."
+      smell: "Clean fish smell."
+      sound: "Silent. Schools visible as ripples."
+      habitat: "Lakes and rivers, often in shoals."
+      season: "Active and feeding."
+      uses: "Good eating, easier than pike."
+
+  eel:
+    id: 33
+    latin: Anguilla anguilla
+    category: aquatic
+    abundance: occasional
+    terrains: [shallow_water, wetland, reed_bed]
+    photo: "/assets/species/eel.jpg"
+    observations:
+      visual: "Long snake-like fish, dark greenish-brown. Nocturnal."
+      tactile: "Extremely slimy - impossible to grip."
+      smell: "Strong fishy, muddy smell."
+      sound: "Silent."
+      habitat: "Lake bottoms, muddy areas. Hunts at night."
+      season: "Active in warm months."
+      uses: "Rich oily meat. Caught in wicker traps."
+
+  # BIRDS
+  crane:
+    id: 40
+    latin: Grus grus
+    category: bird
+    abundance: occasional
+    terrains: [wetland, grassland]
+    photo: "/assets/species/crane.jpg"
+    observations:
+      visual: "Tall elegant bird, grey plumage, red crown patch."
+      tactile: "Tracks: Large three-toed prints in mud."
+      smell: "Little scent."
+      sound: "Loud trumpeting calls carry great distances."
+      habitat: "Open wetlands, marshes, wet meadows."
+      season: "Pairs displaying and nesting."
+      uses: "Feathers prized. Large eggs."
+
+  woodpecker:
+    id: 41
+    latin: Dendrocopos major
+    category: bird
+    abundance: common
+    terrains: [birch_woodland, mixed_woodland, carr_woodland]
+    photo: "/assets/species/woodpecker.jpg"
+    observations:
+      visual: "Black and white bird with red markings. Climbs tree trunks."
+      tactile: "Nest holes in dead wood, perfectly round ~5cm."
+      smell: "No distinctive scent."
+      sound: "Loud drumming on dead wood. Sharp 'kick' call."
+      habitat: "Woodland with mature trees."
+      season: "Drumming to establish territory."
+      uses: "Indicates dead wood presence."
+
+  eagle:
+    id: 42
+    latin: Aquila chrysaetos
+    category: bird
+    abundance: rare
+    terrains: [grassland, mixed_woodland]
+    photo: "/assets/species/eagle.jpg"
+    observations:
+      visual: "Huge dark brown raptor with golden nape. Massive wingspan."
+      tactile: "Pellets contain fur and bones."
+      smell: "Nest areas smell of decay."
+      sound: "High yelping calls."
+      habitat: "Hunts over open ground. Huge territory."
+      season: "Nesting. Adults hunting for chicks."
+      uses: "Feathers highly prized for spiritual use."
+
+  owl:
+    id: 43
+    latin: Strix aluco
+    category: bird
+    abundance: occasional
+    terrains: [mixed_woodland, birch_woodland]
+    photo: "/assets/species/owl.jpg"
+    observations:
+      visual: "Stocky brown owl with large dark eyes, round face. Nocturnal."
+      tactile: "Pellets on ground contain small bones and fur."
+      smell: "Roost sites have musky smell."
+      sound: "Classic hooting 'hoo-hoo-hoo'."
+      habitat: "Mature woodland with old trees."
+      season: "Chicks in nest hole."
+      uses: "Feathers for decoration. Controls rodents."

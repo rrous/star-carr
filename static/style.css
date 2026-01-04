@@ -1,4 +1,4 @@
-/* Star Carr Mesolithic Scholar Simulator - Styles v2 */
+/* Star Carr Mesolithic Scholar Simulator - Styles */
 
 * {
     margin: 0;
@@ -40,6 +40,36 @@ header h1 {
     margin-top: 0.25rem;
 }
 
+.header-controls {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    margin-top: 0.75rem;
+    align-items: center;
+}
+
+.time-control, .god-mode-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.time-control select {
+    background: #242438;
+    color: #e0e0e0;
+    border: 1px solid #444;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+}
+
+.god-mode-toggle label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    color: #f59e0b;
+}
+
 /* Main layout */
 main {
     display: flex;
@@ -57,51 +87,97 @@ main {
     border-radius: 4px;
     background: #1a1a2e;
     cursor: crosshair;
-    display: block;
-}
-
-/* Location info - under map */
-.location-info {
-    background: #242438;
-    padding: 0.75rem 1rem;
-    border-radius: 4px;
-    margin-top: 0.75rem;
-}
-
-#location-text {
-    font-family: monospace;
-    color: #86efac;
-    font-size: 0.9rem;
-}
-
-#terrain-text {
-    margin-top: 0.25rem;
-    font-size: 0.9rem;
-}
-
-/* Terrain badges */
-.terrain-visible {
-    margin-top: 0.5rem;
-}
-
-#terrain-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.4rem;
-}
-
-.terrain-badge {
-    padding: 0.2rem 0.5rem;
-    border-radius: 3px;
-    font-size: 0.75rem;
-    text-transform: capitalize;
 }
 
 .controls {
     text-align: center;
     margin-top: 0.5rem;
-    font-size: 0.8rem;
+    font-size: 0.85rem;
     color: #666;
+}
+
+.controls p {
+    margin: 0.25rem 0;
+}
+
+/* God mode panel */
+.god-mode-panel {
+    background: #2a2a3e;
+    border: 1px solid #f59e0b;
+    border-radius: 4px;
+    padding: 0.75rem;
+    margin-top: 0.75rem;
+}
+
+.god-mode-panel.hidden {
+    display: none;
+}
+
+.god-mode-panel h3 {
+    color: #f59e0b;
+    font-size: 0.9rem;
+    margin-bottom: 0.5rem;
+}
+
+.god-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+}
+
+.god-controls label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+}
+
+.corridor-legend {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.corridor-legend h4 {
+    color: #888;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.2rem 0;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 2px;
+}
+
+.predator-info {
+    margin-top: 0.75rem;
+    font-size: 0.8rem;
+}
+
+.predator-info h4 {
+    color: #888;
+    font-size: 0.75rem;
+    margin-bottom: 0.25rem;
+}
+
+.predator-item {
+    margin: 0.2rem 0;
+}
+
+.predator-item.present {
+    color: #ef4444;
+}
+
+.predator-item.absent {
+    color: #22c55e;
 }
 
 /* Observation panel */
@@ -110,18 +186,80 @@ main {
     min-width: 0;
     max-height: calc(100vh - 150px);
     overflow-y: auto;
-    background: #242438;
-    padding: 1rem;
-    border-radius: 4px;
 }
 
 .observation-panel h2 {
     font-size: 1rem;
     color: #86efac;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     text-transform: uppercase;
     letter-spacing: 0.1em;
     font-weight: 500;
+}
+
+.location-info,
+.terrain-visible,
+.signs-section,
+.observations {
+    background: #242438;
+    padding: 1rem;
+    border-radius: 4px;
+    margin-bottom: 1rem;
+}
+
+#location-text {
+    font-family: monospace;
+    color: #aaa;
+}
+
+#terrain-text {
+    margin-top: 0.5rem;
+}
+
+.corridor-info {
+    margin-top: 0.5rem;
+    color: #f59e0b;
+    font-size: 0.85rem;
+}
+
+.corridor-info.hidden {
+    display: none;
+}
+
+/* Terrain badges */
+#terrain-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.terrain-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.8rem;
+    text-transform: capitalize;
+}
+
+/* Signs section */
+.sign-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.5rem 0;
+    padding: 0.5rem;
+    background: #1a1a2e;
+    border-radius: 4px;
+}
+
+.sign-char {
+    font-size: 1.2rem;
+    font-family: monospace;
+    width: 1.5rem;
+    text-align: center;
+}
+
+.sign-desc {
+    font-size: 0.9rem;
 }
 
 /* Species cards */
@@ -131,26 +269,16 @@ main {
     border-radius: 4px;
     padding: 1rem;
     margin-bottom: 1rem;
-    transition: border-color 0.2s, box-shadow 0.2s;
-}
-
-.species-card.highlighted {
-    border-color: #86efac;
-    box-shadow: 0 0 10px rgba(134, 239, 172, 0.3);
 }
 
 .species-header {
     display: flex;
     flex-wrap: wrap;
-    align-items: center;
+    align-items: baseline;
     gap: 0.5rem;
     margin-bottom: 0.75rem;
     border-bottom: 1px solid #333;
     padding-bottom: 0.5rem;
-}
-
-.species-symbol {
-    font-size: 1.5rem;
 }
 
 .species-header h3 {
@@ -171,7 +299,6 @@ main {
     text-transform: capitalize;
     background: #333;
     color: #aaa;
-    margin-left: auto;
 }
 
 .category-badge.tree { background: #166534; color: #fff; }
@@ -181,21 +308,26 @@ main {
 .category-badge.medium_herbivore { background: #78350f; color: #fff; }
 .category-badge.predator { background: #991b1b; color: #fff; }
 .category-badge.aquatic { background: #1e40af; color: #fff; }
-.category-badge.bird { background: #5b21b6; color: #fff; }
+
+.state-badge {
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.7rem;
+    background: #7c3aed;
+    color: #fff;
+}
 
 .species-photo {
-    max-width: 180px;
-    max-height: 130px;
+    max-width: 200px;
+    max-height: 150px;
     border-radius: 4px;
     margin-bottom: 0.75rem;
     border: 1px solid #333;
-    float: right;
-    margin-left: 1rem;
 }
 
 .species-details p {
-    margin-bottom: 0.4rem;
-    font-size: 0.85rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
     line-height: 1.4;
 }
 
@@ -206,16 +338,6 @@ main {
 .placeholder {
     color: #666;
     font-style: italic;
-}
-
-.more-species {
-    color: #86efac;
-    font-size: 0.85rem;
-    text-align: center;
-    padding: 0.5rem;
-    background: #1a1a2e;
-    border-radius: 4px;
-    margin-top: 0.5rem;
 }
 
 /* Footer */
@@ -257,11 +379,6 @@ footer {
         display: flex;
         flex-direction: column;
         align-items: center;
-    }
-    
-    #map-canvas {
-        max-width: 100%;
-        height: auto;
     }
     
     .observation-panel {

@@ -7,6 +7,3 @@ services:
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.11"
-      # Add these in Render Dashboard (not here) for security:
-      # - UPSTASH_REDIS_REST_URL
-      # - UPSTASH_REDIS_REST_TOKEN
