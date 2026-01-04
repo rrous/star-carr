@@ -208,7 +208,7 @@ species:
     latin: "Phragmites australis"
     common: "Common Reed"
     category: plant
-    photo: reeds.jpg
+    photo: reed.jpg
     
     distribution:
       base_density: 0.9

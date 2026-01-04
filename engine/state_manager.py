@@ -299,7 +299,7 @@ class StateManager:
                 'count': len(cells),
                 'locations': cells,
                 'state': max_state,
-                'photo_url': sp.get('photo') if sp.get('photo') else None,
+                'photo_url': f"/assets/species/{sp.get('photo')}" if sp.get('photo') else None,
                 **text,
             })
         

@@ -10,6 +10,7 @@ const state = {
     playerY: 0,
     currentObservations: null,
     revealedCells: new Set(), // Persists during session
+    revealedSigns: [], // Persists during session
     godMode: false,
     showCorridors: true,
     showSigns: true,
@@ -22,7 +23,7 @@ const state = {
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 8;
+const CELL_SIZE = 24;
 const VIEW_RADIUS = 25;
 
 // Species category symbols
@@ -405,6 +406,14 @@ function renderMap(terrainData) {
             
             ctx.fillStyle = sign.color;
             ctx.fillText(sign.char, screenX, screenY);
+        }
+        
+        // Add to revealed signs if not already present
+        for (const sign of state.currentObservations.signs) {
+            const existing = state.revealedSigns.find(s => s.x === sign.x && s.y === sign.y);
+            if (!existing) {
+                state.revealedSigns.push(sign);
+            }
         }
     }
     
