@@ -208,7 +208,7 @@ species:
     latin: "Phragmites australis"
     common: "Common Reed"
     category: plant
-    photo: "reeds.jpg"
+    photo: reeds.jpg
     
     distribution:
       base_density: 0.9
@@ -232,7 +232,7 @@ species:
     latin: "Urtica dioica"
     common: "Stinging Nettle"
     category: plant
-    photo: "nettles.jpg"    
+    photo: nettles.jpg
     
     distribution:
       base_density: 0.1
@@ -316,7 +316,7 @@ species:
     common: "Elk (Moose)"
     category: large_herbivore
     tags: [wolf_prey, aquatic]
-    photo: """elk.jpg"
+    photo: elk.jpg
     
     distribution:
       density_per_km2: 1.5
@@ -355,7 +355,7 @@ species:
     common: "European Beaver"
     category: medium_herbivore
     tags: [aquatic, nocturnal]
-    photo: """beaver.jpg"
+    photo: beaver.jpg
     
     distribution:
       density_per_km2: 0.5
