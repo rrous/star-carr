@@ -268,7 +268,7 @@ class StateManager:
                         continue
                     cy, cx = y + dy, x + dx
                     if 0 <= cy < rows and 0 <= cx < cols and presence[cy, cx] > 0:
-                        cells.append({'x': cx, 'y': cy})
+                        cells.append((cx, cy))
                         max_state = max(max_state, int(presence[cy, cx]))
             
             if not cells:
