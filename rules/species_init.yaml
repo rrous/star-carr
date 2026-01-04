@@ -108,7 +108,7 @@ species:
     common: "Birch"
     category: tree
     tags: [softwood]
-    photo: "birch.jpg"
+    photo: birch.jpg
     
     distribution:
       base_density: 0.5
@@ -144,7 +144,7 @@ species:
     common: "Willow"
     category: tree
     tags: [softwood, wetland]
-    photo: "willow.jpg"
+    photo: willow.jpg
     
     distribution:
       base_density: 0.4
@@ -181,7 +181,7 @@ species:
     common: "Alder"
     category: tree
     tags: [softwood, wetland]
-    photo: "alder.jpg"
+    photo: alder.jpg
     
     distribution:
       base_density: 0.35
@@ -232,7 +232,7 @@ species:
     latin: "Urtica dioica"
     common: "Stinging Nettle"
     category: plant
-    photo: nettles.jpg
+    tags: [nitrophilic]
     
     distribution:
       base_density: 0.1
@@ -355,7 +355,6 @@ species:
     common: "European Beaver"
     category: medium_herbivore
     tags: [aquatic, nocturnal]
-    photo: beaver.jpg
     
     distribution:
       density_per_km2: 0.5
@@ -409,10 +408,9 @@ species:
     common: "Wolf"
     category: predator
     tags: [apex_predator]
-    photo: wolf.jpg
-  
+    
     distribution:
-      presence_probability: 0.9
+      presence_probability: 0.3
       density_per_km2: 0.02
       group_size: [3, 8]
       group_spread: 10
@@ -454,7 +452,6 @@ species:
     common: "Brown Bear"
     category: predator
     tags: [apex_predator]
-    photo: bear.jpg
     
     distribution:
       presence_probability: 0.2
@@ -516,7 +513,6 @@ species:
     latin: "Anas/Anser spp."
     common: "Waterfowl"
     category: aquatic
-    photo: "waterfowl.jpg"
     
     distribution:
       density_per_km2: 15
