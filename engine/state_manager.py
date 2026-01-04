@@ -297,7 +297,6 @@ class StateManager:
                 'latin_name': sp.get('latin', ''),
                 'category': sp.get('category', ''),
                 'count': len(cells),
-                'locations': cells,
                 'state': max_state,
                 'photo_url': f'/assets/species/{sp.get("photo")}' if sp.get('photo') else None,
                 **text,
