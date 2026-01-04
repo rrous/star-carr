@@ -22,7 +22,7 @@ const state = {
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 8;
+const CELL_SIZE = 24;
 const VIEW_RADIUS = 25;
 
 // DOM elements
