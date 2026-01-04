@@ -268,7 +268,7 @@ class StateManager:
                         continue
                     cy, cx = y + dy, x + dx
                     if 0 <= cy < rows and 0 <= cx < cols and presence[cy, cx] > 0:
-                        cells.append((cx, cy))
+                        cells.append({'x': cx, 'y': cy})
                         max_state = max(max_state, int(presence[cy, cx]))
             
             if not cells:
@@ -297,8 +297,9 @@ class StateManager:
                 'latin_name': sp.get('latin', ''),
                 'category': sp.get('category', ''),
                 'count': len(cells),
+                'locations': cells,
                 'state': max_state,
-                'photo_url': f'/assets/species/{sp.get("photo")}' if sp.get('photo') else None,
+                'photo_url': sp.get('photo') if sp.get('photo') else None,
                 **text,
             })
         
