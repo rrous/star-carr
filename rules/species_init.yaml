@@ -108,7 +108,7 @@ species:
     common: "Birch"
     category: tree
     tags: [softwood]
-    photo: "/assets/species/birch.jpg"
+    photo: "birch.jpg"
     
     distribution:
       base_density: 0.5
@@ -144,7 +144,7 @@ species:
     common: "Willow"
     category: tree
     tags: [softwood, wetland]
-    photo: "/assets/species/willow.jpg"
+    photo: "willow.jpg"
     
     distribution:
       base_density: 0.4
@@ -181,7 +181,7 @@ species:
     common: "Alder"
     category: tree
     tags: [softwood, wetland]
-    photo: "/assets/species/alder.jpg"
+    photo: "alder.jpg"
     
     distribution:
       base_density: 0.35
@@ -208,7 +208,7 @@ species:
     latin: "Phragmites australis"
     common: "Common Reed"
     category: plant
-    photo: "/assets/species/reeds.jpg"
+    photo: "reeds.jpg"
     
     distribution:
       base_density: 0.9
@@ -232,7 +232,7 @@ species:
     latin: "Urtica dioica"
     common: "Stinging Nettle"
     category: plant
-    photo: "/assets/species/nettles.jpg"    
+    photo: "nettles.jpg"    
     
     distribution:
       base_density: 0.1
@@ -264,7 +264,7 @@ species:
     common: "Red Deer"
     category: large_herbivore
     tags: [wolf_prey, bear_prey, crepuscular]
-    photo: "/assets/species/red_deer.jpg"
+    photo: red_deer.jpg
     
     distribution:
       density_per_km2: 10
@@ -316,7 +316,7 @@ species:
     common: "Elk (Moose)"
     category: large_herbivore
     tags: [wolf_prey, aquatic]
-    photo: "/assets/species/elk.jpg"
+    photo: """elk.jpg"
     
     distribution:
       density_per_km2: 1.5
@@ -355,7 +355,7 @@ species:
     common: "European Beaver"
     category: medium_herbivore
     tags: [aquatic, nocturnal]
-    photo: "/assets/species/beaver.jpg"
+    photo: """beaver.jpg"
     
     distribution:
       density_per_km2: 0.5
@@ -409,10 +409,10 @@ species:
     common: "Wolf"
     category: predator
     tags: [apex_predator]
-    photo: "/assets/species/wolf.jpg"
-    
+    photo: wolf.jpg
+  
     distribution:
-      presence_probability: 0.3
+      presence_probability: 0.9
       density_per_km2: 0.02
       group_size: [3, 8]
       group_spread: 10
@@ -454,7 +454,7 @@ species:
     common: "Brown Bear"
     category: predator
     tags: [apex_predator]
-    photo: "/assets/species/bear.jpg"
+    photo: bear.jpg
     
     distribution:
       presence_probability: 0.2
@@ -488,7 +488,7 @@ species:
     latin: "Esox lucius"
     common: "Pike"
     category: aquatic
-    photo: "/assets/species/pike.jpg"
+    photo: pike.jpg
     
     distribution:
       density_per_km2: 5
@@ -516,7 +516,7 @@ species:
     latin: "Anas/Anser spp."
     common: "Waterfowl"
     category: aquatic
-    photo: "/assets/species/waterfowl.jpg"
+    photo: "waterfowl.jpg"
     
     distribution:
       density_per_km2: 15

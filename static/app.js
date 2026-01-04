@@ -22,8 +22,19 @@ const state = {
 // Canvas setup
 const canvas = document.getElementById('map-canvas');
 const ctx = canvas.getContext('2d');
-const CELL_SIZE = 24;
+const CELL_SIZE = 8;
 const VIEW_RADIUS = 25;
+
+// Species category symbols
+const SPECIES_SYMBOLS = {
+    'tree': '🌳',
+    'shrub': '🌿',
+    'plant': '🌱',
+    'large_herbivore': '🦌',
+    'medium_herbivore': '🦫',
+    'predator': '🐺',
+    'aquatic': '🐟'
+};
 
 // DOM elements
 const locationText = document.getElementById('location-text');
@@ -366,8 +377,25 @@ function renderMap(terrainData) {
     }
     
     // Draw visible signs (non-god mode or overlay)
+    // Also draw previously revealed signs
+    ctx.font = `${CELL_SIZE + 2}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    
+    // Draw all revealed signs (persistent)
+    for (const sign of state.revealedSigns) {
+        const screenX = offsetX + (sign.x - min_x) * CELL_SIZE + CELL_SIZE / 2;
+        const screenY = offsetY + (sign.y - min_y) * CELL_SIZE + CELL_SIZE / 2;
+        
+        if (screenX >= 0 && screenX < canvas.width &&
+            screenY >= 0 && screenY < canvas.height) {
+            ctx.fillStyle = sign.color;
+            ctx.fillText(sign.char, screenX, screenY);
+        }
+    }
+    
+    // Add current visible signs to revealed set
     if (state.currentObservations?.signs) {
-        ctx.font = `${CELL_SIZE + 2}px monospace`;
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
         
@@ -377,6 +405,32 @@ function renderMap(terrainData) {
             
             ctx.fillStyle = sign.color;
             ctx.fillText(sign.char, screenX, screenY);
+        }
+    }
+    
+    // Draw species symbols within visibility
+    if (state.currentObservations?.observations) {
+        const visRadius = state.config.visibility_radius;
+        ctx.font = `${CELL_SIZE}px serif`;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        
+        for (const sp of state.currentObservations.observations) {
+            if (!sp.locations) continue;
+            
+            const symbol = SPECIES_SYMBOLS[sp.category] || '?';
+            
+            for (const loc of sp.locations) {
+                const dx = loc.x - state.playerX;
+                const dy = loc.y - state.playerY;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                
+                if (dist <= visRadius) {
+                    const screenX = offsetX + (loc.x - min_x) * CELL_SIZE + CELL_SIZE / 2;
+                    const screenY = offsetY + (loc.y - min_y) * CELL_SIZE + CELL_SIZE / 2;
+                    ctx.fillText(symbol, screenX, screenY);
+                }
+            }
         }
     }
     
